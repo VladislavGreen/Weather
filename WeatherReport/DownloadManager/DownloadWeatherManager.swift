@@ -55,52 +55,52 @@ import Foundation
      */
     
     
-    struct Weather : Codable {
-        var now : Int               // Время сервера в формате Unixtime.
-        var now_dt: String          // Время сервера в UTC
-        var info: Info              // ОБЪЕКТ информации о населенном пункте.
-        var fact: Fact              // ОБЪЕКТ фактической информации о погоде.
-        var geo_object: GeoObject   // ОБЪЕКТ с данными объекта гео-локации
-        var forecasts: [Forcast]    // ОБЪЕКТ прогнозной информации о погоде.
+    struct WeatherDecodable : Decodable {
+//        var now : Int64             // Время сервера в формате Unixtime.
+//        var now_dt: String          // Время сервера в UTC
+//        var info: InfoDecodable              // ОБЪЕКТ информации о населенном пункте.
+        var geo_object: GeoObjectDecodable   // ОБЪЕКТ с данными объекта гео-локации
+        var fact: FactDecodable              // ОБЪЕКТ фактической информации о погоде.
+        var forecasts: [ForcastDecodable]    // ОБЪЕКТ прогнозной информации о погоде.
     }
     
 
-    struct Info: Codable {
-        var lat: Float              // Широта (в градусах).
-        var lon: Float              // Долгота (в градусах)
-        var url: String             // Страница населенного пункта на сайте Яндекс.Погода
-    }
+//    struct InfoDecodable: Decodable {
+//        var lat: Float              // Широта (в градусах).
+//        var lon: Float              // Долгота (в градусах)
+//        var url: String             // Страница населенного пункта на сайте Яндекс.Погода
+//    }
 
 
-    struct GeoObject: Codable {
-        var country: GeoObjectDetail
+    struct GeoObjectDecodable: Decodable {
+        var country: GeoObjectDetailDecodable
         var district: String?
-        var locality: GeoObjectDetail
-        var province: GeoObjectDetail
+        var locality: GeoObjectDetailDecodable
+        var province: GeoObjectDetailDecodable
     }
     
-    struct GeoObjectDetail: Codable {
-        var id: Int?
+    struct GeoObjectDetailDecodable: Decodable {
+//        var id: Int64?
         var name: String?
     }
    
 
-    struct Fact: Codable {
+    struct FactDecodable: Decodable {
         
-        var temp: Int               // Температура (°C)
-        var feels_like: Int         // Ощущаемая температура (°C)
+        var temp: Int64               // Температура (°C)
+        var feels_like: Int64         // Ощущаемая температура (°C)
         var condition: String       // Код расшифровки погодного описания. Возможные значения 19 штук
         var wind_speed: Float       // Скорость ветра
         var wind_gust: Float        // Скорость порывов ветра
         var wind_dir: String        // Направление ветра 9 штук включая штиль (с)
-        var pressure_mm: Int        // Давление (в мм рт. ст.)
-        var humidity: Int           // Влажность воздуха (в процентах).
-        var obs_time: Int           // Время замера погодных данных в формате Unixtime
+        var pressure_mm: Int64        // Давление (в мм рт. ст.)
+        var humidity: Int64           // Влажность воздуха (в процентах).
+//        var obs_time: Int64           // Время замера погодных данных в формате Unixtime
         var is_thunder: Bool        // Признак грозы. Возможные значения: true - гроза
-        var prec_type: Int          // Тип осадков: 0 — без осадков. 1 — дождь. 2 — дождь со снегом. 3 — снег. 4 — град.
+        var prec_type: Int64          // Тип осадков: 0 — без осадков. 1 — дождь. 2 — дождь со снегом. 3 — снег. 4 — град.
         var prec_strength: Float    // Сила осадков: 0 — без. 0.25 — слаб дж/cн. 0.5 — д/с. 0.75 — сильн д/с.1 — ливень/сильн снег.
         var cloudness: Float        // Облачность: 0 — ясно.0.25 — малообл. 0.5 и 0.75 — обл с прояснениями.1 — пасмурно.
-        var uv_index: Int
+        var uv_index: Int64
         
         /* не используются:
             daytime = d;
@@ -117,15 +117,15 @@ import Foundation
     }
 
 
-    struct Forcast: Codable {
+    struct ForcastDecodable: Decodable {
         
         var date: String            // Дата прогноза в формате ГГГГ-ММ-ДД.
-        var date_ts: Int            // Дата прогноза в формате Unixtime.
-        var hours: [Hour]           // ОБЪЕКТ почасового прогноза погоды.  строка.
-        var parts: Part             // 12-ЧАСОВЫЕ ПРОГНОЗЫ. тип прогноза: night, day_short
+        var date_ts: Int64            // Дата прогноза в формате Unixtime.
+        var hours: [HourDecodable]           // ОБЪЕКТ почасового прогноза погоды.  строка.
+        var parts: PartDecodable             // 12-ЧАСОВЫЕ ПРОГНОЗЫ. тип прогноза: night, day_short
         var sunrise: String?        // Время восхода Солнца, локальное время (может отсутствовать для полярных регионов).
         var sunset: String?         // Время заката Солнца, локальное время (может отсутствовать для полярных регионов).
-        var moon_code: Int          // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
+        var moon_code: Int64          // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
         
         /* Не используются:
             biomet =
@@ -138,10 +138,10 @@ import Foundation
          */
     }
     
-    struct Part: Codable {
+    struct PartDecodable: Decodable {
         
-        var night: Night            // ОБЪЕКТ с прогнозом погоды на ночь.
-        var day_short: Day_short   // ОБЪЕКТ с 12-часовым прогнозом на день
+        var night: NightDecodable            // ОБЪЕКТ с прогнозом погоды на ночь.
+        var day_short: Day_shortDecodable   // ОБЪЕКТ с 12-часовым прогнозом на день
         
         /* Не используются:
             day
@@ -153,20 +153,20 @@ import Foundation
     
 
 
-    struct Night: Codable {
-        var temp_min: Int               // Минимальная температура для времени суток (°C)
-        var temp_max: Int?              // Максимальная температура для времени суток (°C)
-        var temp_avg: Int?              // Средняя температура для времени суток (°C)
-        var feels_like: Int             // Ощущаемая температура (°C)
+    struct NightDecodable: Decodable {
+        var temp_min: Int64               // Минимальная температура для времени суток (°C)
+        var temp_max: Int64?              // Максимальная температура для времени суток (°C)
+        var temp_avg: Int64?              // Средняя температура для времени суток (°C)
+        var feels_like: Int64             // Ощущаемая температура (°C)
         var condition: String           // Код расшифровки погодного описания clear — ясно. partly-cloudy — малооблачно. etc
         var wind_speed: Float           // Скорость ветра (в м/с)
         var wind_gust: Float            // Скорость порывов ветра (в м/с)
         var wind_dir: String            // Направление ветра 9 штук включая штиль (с)
-        var pressure_mm: Int            // Давление (в мм рт. ст.).
-        var humidity: Int               // Влажность воздуха (в процентах)
+        var pressure_mm: Int64            // Давление (в мм рт. ст.).
+        var humidity: Int64               // Влажность воздуха (в процентах)
         var prec_mm: Float              // Прогнозируемое количество осадков (в мм).
-        var prec_period: Int
-        var prec_type: Int              // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
+        var prec_period: Int64
+        var prec_type: Int64              // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
         var prec_strength: Float        // Сила осадков: 0 — без. 0.25 — слаб дж/cн. 0.5 — д/с. 0.75 — сильн д/с.1 — ливень/сильн сн.
         var cloudness: Float            // Облачность: 0 — ясно.0.25 — малообл.0.5 и.0.75 — обл с прояснениями.1 — пасмурно.
         
@@ -184,43 +184,43 @@ import Foundation
          */
     }
     
-    struct Day_short: Codable {
-        var temp_min: Int
-        var temp_max: Int?
-        var temp_avg: Int?
-        var feels_like: Int
+    struct Day_shortDecodable: Decodable {
+        var temp_min: Int64
+        var temp_max: Int64?
+        var temp_avg: Int64?
+        var feels_like: Int64
         var condition: String
         var wind_speed: Float
         var wind_gust: Float
         var wind_dir: String
-        var pressure_mm: Int
-        var humidity: Int
+        var pressure_mm: Int64
+        var humidity: Int64
         var prec_mm: Float
-        var prec_period: Int
-        var prec_type: Int
+        var prec_period: Int64
+        var prec_type: Int64
         var prec_strength: Float
         var cloudness: Float
     }
     
-    struct Hour: Codable {
+    struct HourDecodable: Decodable {
         var hour: String                // Значение часа, для которого дается прогноз (0-23), локальное время.
-        var hour_ts: Int                // Время прогноза в Unixtime.
-        var temp: Int
-        var feels_like: Int
+        var hour_ts: Int64                // Время прогноза в Unixtime.
+        var temp: Int64
+        var feels_like: Int64
         var condition: String
         var wind_speed: Float
         var wind_dir: String
-        var pressure_mm: Int
-        var humidity: Int
+        var pressure_mm: Int64
+        var humidity: Int64
         var prec_mm: Float
-        var prec_type: Int
+        var prec_type: Int64
         var prec_strength: Float
         var is_thunder: Bool
         var cloudness: Float
     }
     
     
-func downloadWeatherInfo(lat: Float, lon: Float, completion: ((_ weather: Weather?, _ errorString: String?)->Void)?) {
+func downloadWeatherInfo(lat: Float, lon: Float, completion: ((_ weather: WeatherDecodable?, _ errorString: String?)->Void)?) {
         
         let headers = [
             "X-Yandex-API-Key": "8175584b-3e7a-48de-9009-04343f71bd8a",
@@ -257,10 +257,7 @@ func downloadWeatherInfo(lat: Float, lon: Float, completion: ((_ weather: Weathe
             }
             
             do {
-                let weather = try JSONDecoder().decode(Weather.self, from: unwrappedData)
-//                print(weather.now_dt)
-//                print(weather.fact.temp)
-//                print(weather.geo_object.locality)
+                let weather = try JSONDecoder().decode(WeatherDecodable.self, from: unwrappedData)
                 
                 completion?(weather, nil)
                     

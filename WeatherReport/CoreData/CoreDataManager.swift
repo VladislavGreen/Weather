@@ -55,40 +55,62 @@ class CoreDataManager {
     
     
     // Обновление базы CoreData
-    func setCoreDataCash(weather: Weather) {
-        
+    func setCoreDataCash(weather: WeatherDecodable, completion: (()->())?) {
         
         persistentContainer.performBackgroundTask { contextBackground in
             
-            // Если не найдём способа освежить данные, то сначала cтираем старые данные из CoreData
-            let fetchRequest = WeatherCached.fetchRequest()
+            // Получаем ID города
+            // Ищем данные города в базе
+                    // Если не находим - создаём новый объект
+                    // Если находим - обновляем данные в найденном объекте
+            
+            // Пока просто сначала cтираем старые данные из CoreData
+            let fetchRequest = Weather.fetchRequest()
             for object in (try? self.persistentContainer.viewContext.fetch(fetchRequest)) ?? [] {
                 self.persistentContainer.viewContext.delete(object)
             }
             
+                        
             // наполняем базу CoreData свежими данными
-            // пока просто запишем название страны в тектовый объект
+            let newWeather = Weather(context: contextBackground)
             
-            let country = WeatherCached(context: contextBackground)
-            country.text = weather.geo_object.country.name
-            print(country.text)
+//            newWeather.city = "Current location"
+            
+            newWeather.geoProvinceName = weather.geo_object.province.name
+            newWeather.geoLocalityName = weather.geo_object.locality.name
+            newWeather.geoDistrictName = weather.geo_object.district
+            newWeather.geoCountryName = weather.geo_object.country.name
+            
+            newWeather.factCloudness = weather.fact.cloudness
+            newWeather.factCondition = weather.fact.condition
+            newWeather.factFeelsLike = weather.fact.feels_like
+            newWeather.factHumidity = weather.fact.humidity
+            newWeather.factIsThunder = weather.fact.is_thunder
+            newWeather.factPrecStrength = weather.fact.prec_strength
+            newWeather.factPrecType = weather.fact.prec_type
+            newWeather.factPressureMm = weather.fact.pressure_mm
+            newWeather.factTemp = weather.fact.temp
+            newWeather.factUVIndex = weather.fact.uv_index
+            newWeather.factWindGust = weather.fact.wind_gust
+            newWeather.factWindDirection = weather.fact.wind_dir
+            newWeather.factWindSpeed = weather.fact.wind_speed
+            
             try? contextBackground.save()
 
-//            completion?()
+            completion?()
         }
     }
     
     // Получение данных из базы CoreData
-    func getCoreDataCash() -> String? {
+    func getCoreDataCash() -> Weather? {
         
-        let fetchRequest = WeatherCached.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "text", ascending: true)]
+        let fetchRequest = Weather.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "factCloudness", ascending: true)]
         let data = try? persistentContainer.viewContext.fetch(fetchRequest)
         
-        let country = data?.first?.text
-        print("DATA? \(String(describing: country))")
+        let newWeather = data?.first
 
-        return country
+        return newWeather
     }
     
 

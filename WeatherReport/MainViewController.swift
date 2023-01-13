@@ -45,7 +45,7 @@ class MainViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationItem.title = "MainViewController"
+        navigationItem.title = recentLocation
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "tablecells"))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "tablecells"))
     }
@@ -69,8 +69,8 @@ class MainViewController: UIViewController {
     
     @objc
     func tempButtonPressed() {
-        let string = CoreDataManager.dafaultManager.getCoreDataCash()
-        labelFirst.text = string
+        let newWeather = CoreDataManager.dafaultManager.getCoreDataCash()
+        labelFirst.text = newWeather?.geoCountryName
         
     }
 }

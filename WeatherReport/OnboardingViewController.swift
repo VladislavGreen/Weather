@@ -197,17 +197,28 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
             В бэкграунде (или при закрытии приложения?) освежаем данные в CoreData
                 
             Или определить, кто первый готов?
+         
+         Но пока, проще сначала записывать в CoreData, и из неё же показывать в UI
          */
         
         downloadWeatherInfo(lat: Float(lat), lon: Float(lon)) { weather, errorString in
             
             // в бэкграунде записываем в CoreData
-            CoreDataManager.dafaultManager.setCoreDataCash(weather: weather!)
+            CoreDataManager.dafaultManager.setCoreDataCash(weather: weather!) {
+                
+                let newWeather = CoreDataManager.dafaultManager.getCoreDataCash()
+                
+                self.recentLocation = newWeather?.geoLocalityName
+                print(self.recentLocation)
+                
+                DispatchQueue.main.async {
+                    self.pushMainViewController(with: self.recentLocation)
+            }
             
             // в основном потоке выводим в UI
-            self.recentLocation = weather?.geo_object.locality.name
-            DispatchQueue.main.async {
-                self.pushMainViewController(with: self.recentLocation)
+//            self.recentLocation = weather?.geo_object.locality.name
+//            DispatchQueue.main.async {
+//                self.pushMainViewController(with: self.recentLocation)
             }
         }
     }
