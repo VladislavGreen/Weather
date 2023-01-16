@@ -9,7 +9,24 @@ import UIKit
 
 class MainViewController: UIViewController {
     
-    var recentLocation: String = ""
+    /*
+     
+     Экраны помещаются в ScrollView... А нет! PageViewController!
+     В NavigationBar
+        - кнопка "Настройки"
+        - название города
+        - кнопка локации
+     Количество экранов зависит от количества объектов в массиве сущности Weather в базе CoreData
+     Каждый экран:
+        - Текущая погода и кнопка Подробнее на 24 часа
+        - CollectionView с почасовым? прогнозом
+        - Label "Ежедневный прогноз" и кнопка "25 дней"
+        - Таблица с прогнозами по дням
+        
+     Этот контроллер сделать и использовать как модель экран
+     */
+    
+    var weatherForCity: Weather?
     
     private var labelFirst: UILabel = {
         var view = UILabel()
@@ -37,18 +54,13 @@ class MainViewController: UIViewController {
         return button
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        labelFirst.text = recentLocation
-        setupNavigationBar()
+        labelFirst.text = weatherForCity?.geoLocalityName
         setupView()
     }
     
-    private func setupNavigationBar() {
-        navigationItem.title = recentLocation
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "tablecells"))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "tablecells"))
-    }
     
     private func setupView() {
         view.backgroundColor = .white
@@ -69,8 +81,8 @@ class MainViewController: UIViewController {
     
     @objc
     func tempButtonPressed() {
-        let newWeather = CoreDataManager.dafaultManager.getCoreDataCash()
-        labelFirst.text = newWeather?.geoCountryName
-        
+        let weathers = CoreDataManager.dafaultManager.getCoreDataCash()
+        let weather = weathers?.first
+        labelFirst.text = weather?.geoCountryName
     }
 }

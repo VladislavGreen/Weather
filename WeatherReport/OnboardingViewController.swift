@@ -26,19 +26,19 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
      "Rubik-Medium"
      */
     
-    var recentLocation: String?
+    var recentLocation: Weather?
 
     let locationManager = CLLocationManager()
     
     
-    private var onboardingImageView: UIImageView = {
+    private lazy var onboardingImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "OnboardingPic")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private var labelFirst: UILabel = {
+    private lazy var labelFirst: UILabel = {
         var view = UILabel()
         view.textColor = UIColor(red: 0.973, green: 0.961, blue: 0.961, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_SemiBold", size: 16)
@@ -53,7 +53,7 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         return view
     }()
     
-    private var labelSecond: UILabel = {
+    private lazy var labelSecond: UILabel = {
         var view = UILabel()
         view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 14)
@@ -68,7 +68,7 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         return view
     }()
     
-    private var labelThird: UILabel = {
+    private lazy var labelThird: UILabel = {
         var view = UILabel()
         view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 14)
@@ -155,8 +155,8 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
     private func noButtonPressed() {
         print("No Button Pressed")
         
-        recentLocation = "Геолокация отключена"
-        pushMainViewController(with: recentLocation)
+        recentLocation = nil
+        pushMainViewController()
     }
     
     @objc
@@ -182,7 +182,6 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
             return
         }
         
-        
         let lat = mostRecentLocation.coordinate.latitude
         let lon = mostRecentLocation.coordinate.longitude
         locationManager.stopUpdatingLocation()
@@ -206,19 +205,16 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
             // в бэкграунде записываем в CoreData
             CoreDataManager.dafaultManager.setCoreDataCash(weather: weather!) {
                 
-                let newWeather = CoreDataManager.dafaultManager.getCoreDataCash()
-                
-                self.recentLocation = newWeather?.geoLocalityName
-                print(self.recentLocation)
+//                let weathers = CoreDataManager.dafaultManager.getCoreDataCash()
+//                let newWeather = weathers
+//
+//                self.recentLocation = newWeather?.first
                 
                 DispatchQueue.main.async {
-                    self.pushMainViewController(with: self.recentLocation)
-            }
-            
-            // в основном потоке выводим в UI
-//            self.recentLocation = weather?.geo_object.locality.name
-//            DispatchQueue.main.async {
-//                self.pushMainViewController(with: self.recentLocation)
+//                    self.pushMainViewController(with: self.recentLocation)
+
+                    self.pushMainViewController()
+                }
             }
         }
     }
@@ -228,14 +224,13 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         // ALARM
         print("невозможно получить данные о текущем местоположении, проверьте соединение")
         
-        recentLocation = "Геолокация отключена"
+        recentLocation = nil
         locationManager.stopUpdatingLocation()
-        pushMainViewController(with: recentLocation)
+        pushMainViewController()
     }
     
-    func pushMainViewController(with recentLocation: String?) {
-        let vc = MainViewController()
-        vc.recentLocation = recentLocation!
+    func pushMainViewController() {
+        let vc = PageViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

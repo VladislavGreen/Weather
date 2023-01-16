@@ -17,13 +17,13 @@ class WelcomeViewController: UIViewController {
         let vc: UIViewController
         
         // TEMP
-        vc = OnboardingViewController()
+        vc = PageViewController()
         
         //        if SettingsManager.shared.isFirstLaunch {
         //            vc = OnboardingViewController()
         //            SettingsManager.shared.isFirstLaunch = true
         //        } else {
-        //            vc = MainViewController()
+        //            vc = PageViewController()
         //        }
         self.navigationController?.pushViewController(vc, animated: true)
         

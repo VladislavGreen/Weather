@@ -53,8 +53,6 @@ class CoreDataManager {
         }
     }
     
-    
-    // Обновление базы CoreData
     func setCoreDataCash(weather: WeatherDecodable, completion: (()->())?) {
         
         persistentContainer.performBackgroundTask { contextBackground in
@@ -64,17 +62,21 @@ class CoreDataManager {
                     // Если не находим - создаём новый объект
                     // Если находим - обновляем данные в найденном объекте
             
-            // Пока просто сначала cтираем старые данные из CoreData
+            // Пока просто сначала cтираем старые данные из CoreData, если количество погод больше трёх
             let fetchRequest = Weather.fetchRequest()
-            for object in (try? self.persistentContainer.viewContext.fetch(fetchRequest)) ?? [] {
-                self.persistentContainer.viewContext.delete(object)
-            }
+            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
+            
+
+            
+            
+
             
                         
             // наполняем базу CoreData свежими данными
             let newWeather = Weather(context: contextBackground)
             
-//            newWeather.city = "Current location"
+            // Здесь будет метод определения города по координатам
+            newWeather.cityName = "Current Location"
             
             newWeather.geoProvinceName = weather.geo_object.province.name
             newWeather.geoLocalityName = weather.geo_object.locality.name
@@ -96,22 +98,31 @@ class CoreDataManager {
             newWeather.factWindSpeed = weather.fact.wind_speed
             
             try? contextBackground.save()
-
             completion?()
         }
     }
     
     // Получение данных из базы CoreData
-    func getCoreDataCash() -> Weather? {
+    func getCoreDataCash() -> [Weather]? {
         
         let fetchRequest = Weather.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "factCloudness", ascending: true)]
-        let data = try? persistentContainer.viewContext.fetch(fetchRequest)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
         
-        let newWeather = data?.first
-
-        return newWeather
+        let objects = try? persistentContainer.viewContext.fetch(fetchRequest)
+//        let object = objects?.first
+        
+        print("Всего погод :-) в кэше: \(objects?.count)")
+        
+        return objects
     }
     
-
+    
+    // Стирание всех данных из базы
+    func deleteCoreDataCash() {
+        
+        let fetchRequest = Weather.fetchRequest()
+        for object in (try? self.persistentContainer.viewContext.fetch(fetchRequest)) ?? [] {
+            self.persistentContainer.viewContext.delete(object)
+        }
+    }
 }

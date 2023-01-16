@@ -18,6 +18,7 @@
 		A4BA358D29634B7E002ADA94 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BA358C29634B7E002ADA94 /* SettingsManager.swift */; };
 		A4BA358F29648EEE002ADA94 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BA358E29648EEE002ADA94 /* WelcomeViewController.swift */; };
 		A4BA359129649132002ADA94 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BA359029649132002ADA94 /* OnboardingViewController.swift */; };
+		A4CA720E2974469B00378993 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CA720D2974469B00378993 /* PageViewController.swift */; };
 		A4F96E1D296716B7006C0648 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1C296716B7006C0648 /* MainViewController.swift */; };
 		A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */; };
 		A4F96E2129682991006C0648 /* Rubik-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4F96E20296828FF006C0648 /* Rubik-VariableFont_wght.ttf */; };
@@ -37,6 +38,7 @@
 		A4BA358C29634B7E002ADA94 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		A4BA358E29648EEE002ADA94 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		A4BA359029649132002ADA94 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
+		A4CA720D2974469B00378993 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		A4F96E1C296716B7006C0648 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadWeatherManager.swift; sourceTree = "<group>"; };
 		A4F96E20296828FF006C0648 /* Rubik-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-VariableFont_wght.ttf"; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 				A4BA358C29634B7E002ADA94 /* SettingsManager.swift */,
 				A4D90495296FEB2F00DA9681 /* DownloadManager */,
 				A4F96E1C296716B7006C0648 /* MainViewController.swift */,
+				A4CA720D2974469B00378993 /* PageViewController.swift */,
 				A4BA359029649132002ADA94 /* OnboardingViewController.swift */,
 				A4BA358E29648EEE002ADA94 /* WelcomeViewController.swift */,
 				A4F96E1A296714E7006C0648 /* Application Layer */,
@@ -198,6 +201,7 @@
 			files = (
 				A4F96E1D296716B7006C0648 /* MainViewController.swift in Sources */,
 				A4BA356C2963364D002ADA94 /* AppDelegate.swift in Sources */,
+				A4CA720E2974469B00378993 /* PageViewController.swift in Sources */,
 				A4BA359129649132002ADA94 /* OnboardingViewController.swift in Sources */,
 				A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */,
 				A4BA358F29648EEE002ADA94 /* WelcomeViewController.swift in Sources */,

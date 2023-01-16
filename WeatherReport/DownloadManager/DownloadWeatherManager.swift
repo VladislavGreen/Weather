@@ -258,7 +258,6 @@ func downloadWeatherInfo(lat: Float, lon: Float, completion: ((_ weather: Weathe
             
             do {
                 let weather = try JSONDecoder().decode(WeatherDecodable.self, from: unwrappedData)
-                
                 completion?(weather, nil)
                     
             } catch let error {

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21G320" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="City" representedClassName="City" syncable="YES" codeGenerationType="class">
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="weather" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Weather" inverseName="city" inverseEntity="Weather"/>
-    </entity>
     <entity name="Weather" representedClassName="Weather" syncable="YES" codeGenerationType="class">
+        <attribute name="cityName" optional="YES" attributeType="String"/>
         <attribute name="factCloudness" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="factCondition" optional="YES" attributeType="String"/>
         <attribute name="factFeelsLike" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -22,6 +19,5 @@
         <attribute name="geoDistrictName" optional="YES" attributeType="String"/>
         <attribute name="geoLocalityName" optional="YES" attributeType="String"/>
         <attribute name="geoProvinceName" optional="YES" attributeType="String"/>
-        <relationship name="city" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="weather" inverseEntity="City"/>
     </entity>
 </model>
