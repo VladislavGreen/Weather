@@ -87,7 +87,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     
     
     private func createControllers() {
-        let weathers = CoreDataManager.dafaultManager.getCoreDataCash() ?? nil
+        let weathers = CoreDataManager.defaultManager.getCoreDataCash()
         guard weathers != nil else {
             print("В базе нет данных")
             return }
@@ -101,14 +101,14 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     
     
     func setupPageControl() {
-            pageControl = UIPageControl(frame: CGRect(x: 0,y: UIScreen.main.bounds.minY + 82,width: UIScreen.main.bounds.width,height: 50))
-            self.pageControl.numberOfPages = controllers.count
-            self.pageControl.currentPage = 0
-            self.pageControl.tintColor = UIColor.black
-            self.pageControl.pageIndicatorTintColor = UIColor.gray
-            self.pageControl.currentPageIndicatorTintColor = UIColor.black
-            self.view.addSubview(pageControl)
-        }
+        pageControl = UIPageControl(frame: CGRect(x: 0,y: UIScreen.main.bounds.minY + 74,width: UIScreen.main.bounds.width,height: 50))
+        self.pageControl.numberOfPages = controllers.count
+        self.pageControl.currentPage = 0
+        self.pageControl.tintColor = UIColor.black
+        self.pageControl.pageIndicatorTintColor = UIColor.gray
+        self.pageControl.currentPageIndicatorTintColor = UIColor.black
+        self.view.addSubview(pageControl)
+    }
     
     @objc
     private func editUserSettings() {

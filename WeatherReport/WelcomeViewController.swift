@@ -16,8 +16,9 @@ class WelcomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         let vc: UIViewController
         
-        // TEMP
-        vc = PageViewController()
+        // TEMPORARILY
+        vc = OnboardingViewController()
+//        vc = PageViewController()
         
         //        if SettingsManager.shared.isFirstLaunch {
         //            vc = OnboardingViewController()

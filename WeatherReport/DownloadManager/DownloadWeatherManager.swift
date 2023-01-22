@@ -7,58 +7,11 @@
 
 import Foundation
     
-    /*
-     Необходимо получить:
-     - название населённого пункта
-     - координаты => населённый пункт
-     - время запроса
-     - разброс температур за день
-     - текущая температура
-     - температура по ощущениям
-     - влажность %
-     - усреднённая информация об осадках (Вероятность осадков?)
-     - уровень облачности %
-     - текущая фаза луны? (картинка)
-     - направление ветра
-     - скорость ветра
-     - уровень влажности
-     - время восхода Солнца
-     - время заката Солнца
-     - почасовой (раз в три часа?) прогноз по пунктам:
-     - день/ночь
-     - температура
-     - температура по ощущениям
-     - ветер: скорость, направление
-     - атмосферные осадки вероятность %
-     - облачность %
-     - осадки: тип и вероятность
-     - солнце и луна
-     - УФ индекс
-     - качество воздуха
-     */
-    
-    /*
-     https://yandex.ru/dev/weather/doc/dg/concepts/forecast-test.html#req-example
-     
-     ЗАПРОС
-     GET https://api.weather.yandex.ru/v2/forecast?
-     lat=<широта>
-     & lon=<долгота>
-     & [lang=<язык ответа>]
-     & [limit=<срок прогноза>] - максимум 7 дней
-     & [hours=<наличие почасового прогноза>]
-     & [extra=<подробный прогноз осадков>]
-     
-     X-Yandex-API-Key: <значение ключа>
-     При отправке запросов к API добавляйте значение полученного ключа в заголовок X-Yandex-API-Key: <значение ключа>
-     8175584b-3e7a-48de-9009-04343f71bd8a
-     */
-    
     
     struct WeatherDecodable : Decodable {
-//        var now : Int64             // Время сервера в формате Unixtime.
-//        var now_dt: String          // Время сервера в UTC
-//        var info: InfoDecodable              // ОБЪЕКТ информации о населенном пункте.
+        var now : Int64                      // Время сервера в формате Unixtime.
+//        var now_dt: String                 // Время сервера в UTC
+//        var info: InfoDecodable            // ОБЪЕКТ информации о населенном пункте.
         var geo_object: GeoObjectDecodable   // ОБЪЕКТ с данными объекта гео-локации
         var fact: FactDecodable              // ОБЪЕКТ фактической информации о погоде.
         var forecasts: [ForcastDecodable]    // ОБЪЕКТ прогнозной информации о погоде.
@@ -99,6 +52,7 @@ import Foundation
         var is_thunder: Bool        // Признак грозы. Возможные значения: true - гроза
         var prec_type: Int64          // Тип осадков: 0 — без осадков. 1 — дождь. 2 — дождь со снегом. 3 — снег. 4 — град.
         var prec_strength: Float    // Сила осадков: 0 — без. 0.25 — слаб дж/cн. 0.5 — д/с. 0.75 — сильн д/с.1 — ливень/сильн снег.
+        var prec_prob: Int64        // Вероятность выпадения осадков %
         var cloudness: Float        // Облачность: 0 — ясно.0.25 — малообл. 0.5 и 0.75 — обл с прояснениями.1 — пасмурно.
         var uv_index: Int64
         
@@ -107,7 +61,6 @@ import Foundation
             icon = "bkn_d";
             "is_thunder" = 0; ?????
             polar = 0;
-            "prec_prob" = 0;
             "pressure_pa" = 1010;
             season = winter;
             source = station;
@@ -117,15 +70,15 @@ import Foundation
     }
 
 
-    struct ForcastDecodable: Decodable {
+struct ForcastDecodable: Decodable {
         
         var date: String            // Дата прогноза в формате ГГГГ-ММ-ДД.
-        var date_ts: Int64            // Дата прогноза в формате Unixtime.
-        var hours: [HourDecodable]           // ОБЪЕКТ почасового прогноза погоды.  строка.
-        var parts: PartDecodable             // 12-ЧАСОВЫЕ ПРОГНОЗЫ. тип прогноза: night, day_short
+        var date_ts: Int64          // Дата прогноза в формате Unixtime.
+        var hours: [HourDecodable]  // ОБЪЕКТ почасового прогноза погоды.  строка.
+        var parts: PartDecodable    // 12-ЧАСОВЫЕ ПРОГНОЗЫ. тип прогноза: night, day_short
         var sunrise: String?        // Время восхода Солнца, локальное время (может отсутствовать для полярных регионов).
         var sunset: String?         // Время заката Солнца, локальное время (может отсутствовать для полярных регионов).
-        var moon_code: Int64          // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
+        var moon_code: Int64        // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
         
         /* Не используются:
             biomet =
@@ -203,8 +156,9 @@ import Foundation
     }
     
     struct HourDecodable: Decodable {
+        var cloudness: Float
         var hour: String                // Значение часа, для которого дается прогноз (0-23), локальное время.
-        var hour_ts: Int64                // Время прогноза в Unixtime.
+    //        var hour_ts: Int64                // Время прогноза в Unixtime.
         var temp: Int64
         var feels_like: Int64
         var condition: String
@@ -216,7 +170,6 @@ import Foundation
         var prec_type: Int64
         var prec_strength: Float
         var is_thunder: Bool
-        var cloudness: Float
     }
     
     

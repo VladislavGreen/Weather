@@ -10,21 +10,6 @@ import CoreLocation
 
 class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
 
-    /* ШРИФТЫ
-     Установлены
-     "Rubik-Light_Regular",
-     "Rubik-Light",
-     "Rubik-Light_Medium",
-     "Rubik-Light_SemiBold",
-     "Rubik-Light_Bold",
-     "Rubik-Light_ExtraBold",
-     "Rubik-Light_Black"
-     
-     Нужны
-     "Rubik-SemiBold"
-     "Rubik-Regular"
-     "Rubik-Medium"
-     */
     
     var recentLocation: Weather?
 
@@ -155,8 +140,10 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
     private func noButtonPressed() {
         print("No Button Pressed")
         
-        recentLocation = nil
-        pushMainViewController()
+        CoreDataManager.defaultManager.deleteCoreDataCash()
+        
+//        recentLocation = nil
+//        pushMainViewController()
     }
     
     @objc
@@ -187,32 +174,14 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.stopUpdatingLocation()
 
         /*
-            Если НЕ первый запуск - CoreData НЕ пустой
-                Выводим в UI данные из CoreData
-            Скачиваем данные
-                Если никак - остаёмся с CoreData
-                    Если в CoreData пусто - выводим дефолт (прочерки)
-            Обновляем UI
-            В бэкграунде (или при закрытии приложения?) освежаем данные в CoreData
-                
-            Или определить, кто первый готов?
-         
-         Но пока, проще сначала записывать в CoreData, и из неё же показывать в UI
+         сначала записываем в CoreData, и из неё же показываем в UI
          */
+        
         
         downloadWeatherInfo(lat: Float(lat), lon: Float(lon)) { weather, errorString in
             
-            // в бэкграунде записываем в CoreData
-            CoreDataManager.dafaultManager.setCoreDataCash(weather: weather!) {
-                
-//                let weathers = CoreDataManager.dafaultManager.getCoreDataCash()
-//                let newWeather = weathers
-//
-//                self.recentLocation = newWeather?.first
-                
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!) {
                 DispatchQueue.main.async {
-//                    self.pushMainViewController(with: self.recentLocation)
-
                     self.pushMainViewController()
                 }
             }
