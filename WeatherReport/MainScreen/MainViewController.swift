@@ -19,13 +19,14 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     
     func initFetchedResultsController() {
         let fetchRequest = Forecast.fetchRequest()
-//        let cityName = weatherForCity?.cityName ?? ""
-//        fetchRequest.predicate = NSPredicate(format: "cityName CONTAINS %@", cityName)
-        
-        
+
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         
-        let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataManager.defaultManager.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        let frc = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: CoreDataManager.defaultManager.persistentContainer.viewContext,
+            sectionNameKeyPath: "date",
+            cacheName: nil)
         
         fetchedResultsController = frc
     }
@@ -228,12 +229,17 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     }()
     
     lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
-        tableView.backgroundColor = .systemBackground
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.backgroundColor = .systemRed
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.sectionFooterHeight = 0
+        tableView.sectionHeaderHeight = 10
+//        tableView.sectionHeaderTopPadding = 0
+        
+        tableView.estimatedRowHeight = 56
+        tableView.layer.cornerRadius = 5
 //        tableView.register(MainHeaderView.self, forHeaderFooterViewReuseIdentifier: "HeaderView")
 //        tableView.register(HoursTableViewCell.self, forCellReuseIdentifier: "HoursCell")
         tableView.register(DaysTableViewCell.self, forCellReuseIdentifier: "DaysCell")
@@ -426,6 +432,10 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     - Секция 3 - Кастомные ячейки прогнозов по дням DaysTableViewCell
  */
 
+/*
+    Альтернатива: делать всё, кроме прогнозов в хэдере, а прогнозы - каждый в своей секции
+ */
+
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
 
@@ -440,7 +450,11 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
 //    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        1
+        
+        guard let sections = fetchedResultsController?.sections as [NSFetchedResultsSectionInfo]? else {
+            return 0
+        }
+        return sections.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -453,37 +467,31 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         
 //        return fetchedResultsController?.sections?[section].numberOfObjects ?? 0
         
-        guard let sections = fetchedResultsController?.sections else {
-          return 0
-        }
-        /*get number of rows count for each section*/
-        let sectionInfo = sections[section]
-        return sectionInfo.numberOfObjects
+        
+//        guard let sections = fetchedResultsController?.sections else {
+//          return 0
+//        }
+//        /*get number of rows count for each section*/
+//        let sectionInfo = sections[section]
+//        return sectionInfo.numberOfObjects
+        
+        return 1
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-//        if indexPath.section == 0 {
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosCell", for: indexPath) as! PhotosTableViewCell
-//            return cell
-//        }
-        
-        if indexPath.section == 0  {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
             
             let object = fetchedResultsController?.object(at: indexPath)
-            let obj = object?.ofWeather?.cityName
             
             // форматируем дату
             let dateFetched = object?.dateTS ?? 0
             let dateConverted = formatDate2(unixDateToConvert: dateFetched)
             
-            
             // определяем текст картинку для типа осадков
             let precTypeNumberFetched = object?.dayShort?.precType
             var precImage = UIImage(named: "cloudness")
-            
             
             // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
             switch precTypeNumberFetched {
@@ -500,6 +508,9 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             default:
                 precImage = UIImage(named: "cloudness")
             }
+        
+        print(object?.dayShort?.condition)
+        
             
             let viewModel = DaysTableViewCell.ViewModel(
                 dateText: dateConverted,
@@ -508,20 +519,33 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                 condition: object?.dayShort?.condition ?? "Привет!",
                 minMaxTemp: "\(String(describing: object?.dayShort?.tempMin))°/\(String(describing: object?.dayShort?.tempMax))°")
             cell.setupValues(with: viewModel)
+            
+            cell.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+            cell.layer.cornerRadius = 5
+            cell.clipsToBounds = true
             return cell
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
-            return cell
-        }
+//        } else {
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
+//            return cell
+//        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        56
     }
     
 //    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        if section == 0 {
-//          return 238
-//        } else {
-//            return UITableView.automaticDimension
-//        }
+//        5
 //    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        nil
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        nil
+    }
+        
     
 //    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        if indexPath.section == 0 {

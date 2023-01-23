@@ -17,8 +17,8 @@ class WelcomeViewController: UIViewController {
         let vc: UIViewController
         
         // TEMPORARILY
-        vc = OnboardingViewController()
-//        vc = PageViewController()
+//        vc = OnboardingViewController()
+        vc = PageViewController()
         
         //        if SettingsManager.shared.isFirstLaunch {
         //            vc = OnboardingViewController()

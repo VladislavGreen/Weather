@@ -21,7 +21,7 @@ class DaysTableViewCell: UITableViewCell {
     
     private lazy var cellDate: UILabel = {
         var view = UILabel()
-        view.frame = CGRect(x: 0, y: 0, width: 53, height: 19)
+//        view.frame = CGRect(x: 0, y: 0, width: 53, height: 19)
         view.backgroundColor = .white
         view.textColor = UIColor(red: 0.604, green: 0.587, blue: 0.587, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
@@ -34,7 +34,7 @@ class DaysTableViewCell: UITableViewCell {
     
     private lazy var precipitationLabel: UILabel = {
         var view = UILabel()
-        view.frame = CGRect(x: 0, y: 0, width: 23, height: 15.19)
+//        view.frame = CGRect(x: 0, y: 0, width: 23, height: 15.19)
         view.backgroundColor = .white
         view.textColor = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 12)
@@ -49,13 +49,14 @@ class DaysTableViewCell: UITableViewCell {
         let image = UIImage(named: "conditionRain")
         let view = UIImageView()
         view.image = image
+//        view.frame = CGRect(x: 0, y: 0, width: 15, height: 17.08)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var conditionLabel: UILabel = {
         var view = UILabel()
-        view.frame = CGRect(x: 0, y: 0, width: 206, height: 19)
+//        view.frame = CGRect(x: 0, y: 0, width: 206, height: 19)
         view.backgroundColor = .white
         view.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
@@ -68,7 +69,7 @@ class DaysTableViewCell: UITableViewCell {
     
     private lazy var minMaxTempLabel: UILabel = {
         var view = UILabel()
-        view.frame = CGRect(x: 0, y: 0, width: 43, height: 21.83)
+//        view.frame = CGRect(x: 0, y: 0, width: 43, height: 21.83)
         view.backgroundColor = .white
         view.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 18)
@@ -114,39 +115,40 @@ class DaysTableViewCell: UITableViewCell {
     }
     
     func setupView() {
-        contentView.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+//        contentView.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
         self.contentView.addSubview(self.cellDate)
         self.contentView.addSubview(self.precipitationLabel)
-        self.contentView.addSubview(self.precipitationImageView)
+//        self.contentView.addSubview(self.precipitationImageView)
         self.contentView.addSubview(self.precipitationLabel)
         self.contentView.addSubview(self.conditionLabel)
         self.contentView.addSubview(self.minMaxTempLabel)
         
         NSLayoutConstraint.activate([
             
-            self.contentView.heightAnchor.constraint(equalToConstant: 56),
+//            self.contentView.heightAnchor.constraint(equalToConstant: 56),
             
             self.cellDate.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 6),
             self.cellDate.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
             self.cellDate.heightAnchor.constraint(equalToConstant: 19),
             
-            self.precipitationImageView.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 5.13),
-            self.precipitationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            self.precipitationImageView.heightAnchor.constraint(equalToConstant: 17.08),
-            self.precipitationImageView.widthAnchor.constraint(equalToConstant: 15),
+//            self.precipitationImageView.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 5.13),
+//            self.precipitationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+//            self.precipitationImageView.heightAnchor.constraint(equalToConstant: 17.08),
+//            self.precipitationImageView.widthAnchor.constraint(equalToConstant: 15),
             
             self.precipitationLabel.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 6),
-            self.precipitationLabel.leadingAnchor.constraint(equalTo: precipitationImageView.leadingAnchor, constant: 5),
+            self.precipitationLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
             self.precipitationImageView.heightAnchor.constraint(equalToConstant: 15.19),
             
             self.conditionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 19),
-            self.conditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 66),
             self.conditionLabel.heightAnchor.constraint(equalToConstant: 19),
+            self.conditionLabel.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -18),
+            self.conditionLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 66),
             self.conditionLabel.widthAnchor.constraint(equalToConstant: 206),
             
             self.minMaxTempLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 17),
-            self.minMaxTempLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: 26),
             self.minMaxTempLabel.heightAnchor.constraint(equalToConstant: 19),
+            self.minMaxTempLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -26),
             self.minMaxTempLabel.widthAnchor.constraint(equalToConstant: 21.83),
         ])
     }
