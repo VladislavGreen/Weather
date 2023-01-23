@@ -12,7 +12,7 @@ class DaysTableViewCell: UITableViewCell {
     
     struct ViewModel {
         let dateText: String
-        let precText: String
+        let humidityText: String
         let precImage: UIImage
         let condition: String
         let minMaxTemp: String
@@ -32,7 +32,7 @@ class DaysTableViewCell: UITableViewCell {
         return view
     }()
     
-    private lazy var precipitationLabel: UILabel = {
+    private lazy var humidityLabel: UILabel = {
         var view = UILabel()
 //        view.frame = CGRect(x: 0, y: 0, width: 23, height: 15.19)
         view.backgroundColor = .white
@@ -94,7 +94,7 @@ class DaysTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.cellDate.text = nil
-        self.precipitationLabel.text = nil
+        self.humidityLabel.text = nil
         self.precipitationImageView.image = nil
         self.conditionLabel.text = nil
         self.minMaxTempLabel.text = nil
@@ -108,7 +108,7 @@ class DaysTableViewCell: UITableViewCell {
     
     func setupValues(with viewModel: ViewModel) {
         self.cellDate.text = viewModel.dateText
-        self.precipitationLabel.text = viewModel.precText
+        self.humidityLabel.text = viewModel.humidityText
         self.precipitationImageView.image = viewModel.precImage
         self.conditionLabel.text = viewModel.condition
         self.minMaxTempLabel.text = viewModel.minMaxTemp
@@ -117,28 +117,27 @@ class DaysTableViewCell: UITableViewCell {
     func setupView() {
 //        contentView.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
         self.contentView.addSubview(self.cellDate)
-        self.contentView.addSubview(self.precipitationLabel)
-//        self.contentView.addSubview(self.precipitationImageView)
-        self.contentView.addSubview(self.precipitationLabel)
+        self.contentView.addSubview(self.humidityLabel)
+        self.contentView.addSubview(self.precipitationImageView)
         self.contentView.addSubview(self.conditionLabel)
         self.contentView.addSubview(self.minMaxTempLabel)
         
         NSLayoutConstraint.activate([
             
-//            self.contentView.heightAnchor.constraint(equalToConstant: 56),
+            self.contentView.heightAnchor.constraint(equalToConstant: 56),
             
             self.cellDate.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 6),
             self.cellDate.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
             self.cellDate.heightAnchor.constraint(equalToConstant: 19),
             
-//            self.precipitationImageView.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 5.13),
-//            self.precipitationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-//            self.precipitationImageView.heightAnchor.constraint(equalToConstant: 17.08),
-//            self.precipitationImageView.widthAnchor.constraint(equalToConstant: 15),
+            self.precipitationImageView.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 5.13),
+            self.precipitationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            self.precipitationImageView.heightAnchor.constraint(equalToConstant: 17.08),
+            self.precipitationImageView.widthAnchor.constraint(equalToConstant: 15),
             
-            self.precipitationLabel.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 6),
-            self.precipitationLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
-            self.precipitationImageView.heightAnchor.constraint(equalToConstant: 15.19),
+            self.humidityLabel.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 6),
+            self.humidityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
+            self.humidityLabel.heightAnchor.constraint(equalToConstant: 15.19),
             
             self.conditionLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 19),
             self.conditionLabel.heightAnchor.constraint(equalToConstant: 19),

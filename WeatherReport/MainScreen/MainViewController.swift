@@ -205,9 +205,9 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     
     
     
-    
-    
     // Пропускаем пока часть переменных (min/max, sunrise, sunset)
+    
+    
     
     private lazy var more24Label: UILabel = {
         var view = UILabel()
@@ -364,7 +364,6 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
         ])
     }
     
@@ -458,85 +457,66 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        if section != 3 {
-//            return 1
-//        } else {
-//            return fetchedResultsController?.sections?[section].numberOfObjects ?? 0
-//        }
-        
-        
-//        return fetchedResultsController?.sections?[section].numberOfObjects ?? 0
-        
-        
-//        guard let sections = fetchedResultsController?.sections else {
-//          return 0
-//        }
-//        /*get number of rows count for each section*/
-//        let sectionInfo = sections[section]
-//        return sectionInfo.numberOfObjects
-        
-        return 1
+        1
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-            let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
             
-            let object = fetchedResultsController?.object(at: indexPath)
+        let object = fetchedResultsController?.object(at: indexPath)
             
-            // форматируем дату
-            let dateFetched = object?.dateTS ?? 0
-            let dateConverted = formatDate2(unixDateToConvert: dateFetched)
+        // форматируем дату
+        let dateFetched = object?.dateTS ?? 0
+        let dateConverted = formatDate2(unixDateToConvert: dateFetched)
             
-            // определяем текст картинку для типа осадков
-            let precTypeNumberFetched = object?.dayShort?.precType
-            var precImage = UIImage(named: "cloudness")
+        // определяем и картинку для типа осадков
+        let precTypeNumberFetched = object?.dayShort?.precType
+        var precImage = UIImage(named: "cloudness")
             
-            // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
-            switch precTypeNumberFetched {
-            case 0:
-                precImage = UIImage(named: "cloudness")
-            case 1:
-                precImage = UIImage(named: "cloudness")
-            case 2:
-                precImage = UIImage(named: "cloudness")
-            case 3:
-                precImage = UIImage(named: "cloudness")
-            case 4:
-                precImage = UIImage(named: "cloudness")
-            default:
-                precImage = UIImage(named: "cloudness")
-            }
+        // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град. В нашем задании соответствующих изображений нет, поэтому будем использовать пять вариантов дождя/недождя
         
+        switch precTypeNumberFetched {
+        case 0:
+            precImage = UIImage(named: "conditionClear")
+        case 1:
+            precImage = UIImage(named: "conditionClouds")
+        case 2:
+            precImage = UIImage(named: "conditionRain")
+        case 3:
+            precImage = UIImage(named: "conditionRainRain")
+        case 4:
+            precImage = UIImage(named: "conditionThunder")
+        default:
+            precImage = UIImage(named: "cloudness")
+        }
+        
+        // Влажность
+        let humidity = object?.dayShort?.humidity
+        let humidityText = "\(humidity ?? 0)%"
+            
+            
         print(object?.dayShort?.condition)
         
             
-            let viewModel = DaysTableViewCell.ViewModel(
-                dateText: dateConverted,
-                precText: "\(String(describing: object?.dayShort?.humidity))%",
-                precImage: precImage!,
-                condition: object?.dayShort?.condition ?? "Привет!",
-                minMaxTemp: "\(String(describing: object?.dayShort?.tempMin))°/\(String(describing: object?.dayShort?.tempMax))°")
-            cell.setupValues(with: viewModel)
+        let viewModel = DaysTableViewCell.ViewModel(
+            dateText: dateConverted,
+            humidityText: humidityText,
+            precImage: precImage!,
+            condition: object?.dayShort?.condition ?? "Не могу достать данные!",
+            minMaxTemp: "\(String(describing: object?.dayShort?.tempMin))°/\(String(describing: object?.dayShort?.tempMax))°")
+        cell.setupValues(with: viewModel)
             
-            cell.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
-            cell.layer.cornerRadius = 5
-            cell.clipsToBounds = true
-            return cell
-//        } else {
-//            let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
-//            return cell
-//        }
+        cell.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+        cell.layer.cornerRadius = 5
+        cell.clipsToBounds = true
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         56
     }
-    
-//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        5
-//    }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         nil
@@ -548,9 +528,5 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         
     
 //    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        if indexPath.section == 0 {
-//                let vc = PhotosViewController()
-//                self.navigationController?.pushViewController(vc, animated: true)
-//        }
 //    }
 }
