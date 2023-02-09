@@ -24,7 +24,7 @@
         <attribute name="sunrise" optional="YES" attributeType="String"/>
         <attribute name="sunset" optional="YES" attributeType="String"/>
         <relationship name="dayShort" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DayShort" inverseName="ofForecast" inverseEntity="DayShort"/>
-        <relationship name="hour" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Hour" inverseName="ofForecast" inverseEntity="Hour"/>
+        <relationship name="hours" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Hour" inverseName="ofForecast" inverseEntity="Hour"/>
         <relationship name="night" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Night" inverseName="ofForecast" inverseEntity="Night"/>
         <relationship name="ofWeather" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Weather" inverseName="forecasts" inverseEntity="Weather"/>
     </entity>
@@ -42,7 +42,7 @@
         <attribute name="temp" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="windDir" optional="YES" attributeType="String"/>
         <attribute name="windSpeed" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <relationship name="ofForecast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Forecast" inverseName="hour" inverseEntity="Forecast"/>
+        <relationship name="ofForecast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Forecast" inverseName="hours" inverseEntity="Forecast"/>
     </entity>
     <entity name="Night" representedClassName="Night" syncable="YES" codeGenerationType="class">
         <attribute name="cloudness" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>

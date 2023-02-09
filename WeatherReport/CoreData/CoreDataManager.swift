@@ -15,23 +15,17 @@ class CoreDataManager {
         
     }
     
+//    var locationName : String = "Current Location"
+    
     lazy var persistentContainer: NSPersistentContainer = {
 
         let container = NSPersistentContainer(name: "WeatherReport")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                 
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                Alerts.defaultAlert.showOkAlert(
+                    title: "Проблема!",
+                    message: "Typical reasons for an error here include: \n* The parent directory does not exist, cannot be created, or disallows writing.\n* The persistent store is not accessible, due to permissions or data protection when the device is locked.\n* The device is out of space.\n* The store could not be migrated to the current model version.")
+//                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
         return container
@@ -45,22 +39,14 @@ class CoreDataManager {
             do {
                 try context.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                Alerts.defaultAlert.showOkAlert(title: "Невозможно сохранить данные", message: "Возможно, закончилась память на телефоне?")
             }
         }
     }
     
-    func setCoreDataCash(weather: WeatherDecodable, completion: (()->())?) {
-        
-        
+    func setCoreDataCash(weather: WeatherDecodable, locationName: String, completion: (()->())?) {
         
         persistentContainer.performBackgroundTask { contextBackground in
-            
-            // Пока всё проектируется - стираем старые данные из CoreData
-            self.deleteCoreDataCash()
             
             let fetchRequest = Weather.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
@@ -68,15 +54,16 @@ class CoreDataManager {
             // наполняем базу CoreData свежими данными
             let newWeather = Weather(context: contextBackground)
             
-            // Здесь будет метод определения города по координатам
-            newWeather.cityName = "Current Location"
+            // Если определяем локацию - передаётся "Current location"
+            // Если определяем по названию - передаётся название из ответа API
+            newWeather.cityName = locationName
             
             newWeather.now = weather.now
             
-            newWeather.geoProvinceName = weather.geo_object.province.name
-            newWeather.geoLocalityName = weather.geo_object.locality.name
-            newWeather.geoDistrictName = weather.geo_object.district
-            newWeather.geoCountryName = weather.geo_object.country.name
+            newWeather.geoProvinceName = weather.geo_object.province?.name
+            newWeather.geoLocalityName = weather.geo_object.locality?.name
+            newWeather.geoDistrictName = weather.geo_object.district?.name
+            newWeather.geoCountryName = weather.geo_object.country?.name
             
             newWeather.factCloudness = weather.fact.cloudness
             newWeather.factCondition = weather.fact.condition
@@ -93,7 +80,6 @@ class CoreDataManager {
             newWeather.factWindDirection = weather.fact.wind_dir
             newWeather.factWindSpeed = weather.fact.wind_speed
             
-            
             var newForecasts: [Forecast] = []
             
             for forecast in weather.forecasts {
@@ -103,61 +89,69 @@ class CoreDataManager {
                 newForecast.sunrise = forecast.sunrise
                 newForecast.sunset = forecast.sunset
                 
-                newForecast.dayShort?.cloudness = forecast.parts.day_short.cloudness
-                newForecast.dayShort?.condition = forecast.parts.day_short.condition
-                newForecast.dayShort?.feelsLike = forecast.parts.day_short.feels_like
-                newForecast.dayShort?.humidity = forecast.parts.day_short.humidity
-                newForecast.dayShort?.precMM = forecast.parts.day_short.prec_mm
-                newForecast.dayShort?.precPeriod = forecast.parts.day_short.prec_period
-                newForecast.dayShort?.precStrength = forecast.parts.day_short.prec_strength
-                newForecast.dayShort?.precType = forecast.parts.day_short.prec_type
-                newForecast.dayShort?.pressureMM = forecast.parts.day_short.pressure_mm
-                newForecast.dayShort?.tempAverage = forecast.parts.day_short.temp_avg ?? 0      // пока так
-                newForecast.dayShort?.tempMax = forecast.parts.day_short.temp_max ?? 0          // пока так
-                newForecast.dayShort?.tempMin = forecast.parts.day_short.temp_min
-                newForecast.dayShort?.windGust = forecast.parts.day_short.wind_gust
-                newForecast.dayShort?.windDirection = forecast.parts.day_short.wind_dir
-                newForecast.dayShort?.windSpeed = forecast.parts.day_short.wind_speed
+                let newDayShort = DayShort(context: contextBackground)
+                let dayShort = forecast.parts.day_short
+                newDayShort.cloudness = dayShort.cloudness
+                newDayShort.condition = dayShort.condition
+                newDayShort.feelsLike = dayShort.feels_like
+                newDayShort.humidity = dayShort.humidity
+                newDayShort.precMM = dayShort.prec_mm
+                newDayShort.precPeriod = dayShort.prec_period
+                newDayShort.precStrength = dayShort.prec_strength
+                newDayShort.precType = dayShort.prec_type
+                newDayShort.pressureMM = dayShort.pressure_mm
+                newDayShort.tempAverage = dayShort.temp_avg ?? 0
+                newDayShort.tempMax = dayShort.temp_max ?? 0
+                newDayShort.tempMin = dayShort.temp_min
+                newDayShort.windGust = dayShort.wind_gust
+                newDayShort.windDirection = dayShort.wind_dir
+                newDayShort.windSpeed = dayShort.wind_speed
                 
-                newForecast.night?.cloudness = forecast.parts.night.cloudness
-                newForecast.night?.condition = forecast.parts.night.condition
-                newForecast.night?.feelsLike = forecast.parts.night.feels_like
-                newForecast.night?.humidity = forecast.parts.night.humidity
-                newForecast.night?.precMM = forecast.parts.night.prec_mm
-                newForecast.night?.precPeriod = forecast.parts.night.prec_period
-                newForecast.night?.precStrength = forecast.parts.night.prec_strength
-                newForecast.night?.precType = forecast.parts.night.prec_type
-                newForecast.night?.pressureMM = forecast.parts.night.pressure_mm
-                newForecast.night?.tempAverage = forecast.parts.night.temp_avg ?? 0      // пока так
-                newForecast.night?.tempMax = forecast.parts.night.temp_max ?? 0          // пока так
-                newForecast.night?.tempMin = forecast.parts.night.temp_min
-                newForecast.night?.windGust = forecast.parts.night.wind_gust
-                newForecast.night?.windDirection = forecast.parts.night.wind_dir
-                newForecast.night?.windSpeed = forecast.parts.night.wind_speed
-
-// Номер не проходит:
+                newForecast.dayShort = newDayShort
                 
-//                var newHours: [Hour] = []
-//
-//                for hour in forecast.hours {
-//                    let newHour = Hour(context: contextBackground)
-//                    newHour.cloudness = forecast.hours.cloudness
-//                    newHour.condition
-//                    newHour.feelsLike
-//                    newHour.hour
-//                    newHour.humidity
-//                    newHour.isThunder
-//                    newHour.precMM
-//                    newHour.precStrength
-//                    newHour.precType
-//                    newHour.pressureMM
-//                    newHour.temp
-//                    newHour.windDir
-//                    newHour.windDir
-//
-//                    newHours.append(newHour)
-//                }
                 
+                let newNight = Night(context: contextBackground)
+                newNight.cloudness = forecast.parts.night.cloudness
+                newNight.condition = forecast.parts.night.condition
+                newNight.feelsLike = forecast.parts.night.feels_like
+                newNight.humidity = forecast.parts.night.humidity
+                newNight.precMM = forecast.parts.night.prec_mm
+                newNight.precPeriod = forecast.parts.night.prec_period
+                newNight.precStrength = forecast.parts.night.prec_strength
+                newNight.precType = forecast.parts.night.prec_type
+                newNight.pressureMM = forecast.parts.night.pressure_mm
+                newNight.tempAverage = forecast.parts.night.temp_avg ?? 0
+                newNight.tempMax = forecast.parts.night.temp_max ?? 0
+                newNight.tempMin = forecast.parts.night.temp_min
+                newNight.windGust = forecast.parts.night.wind_gust
+                newNight.windDirection = forecast.parts.night.wind_dir
+                newNight.windSpeed = forecast.parts.night.wind_speed
+                
+                newForecast.night = newNight
+                
+                var newHours: [Hour] = []
+                
+                for hour in forecast.hours {
+                    let newHour = Hour(context: contextBackground)
+                    newHour.cloudness = hour.cloudness
+                    newHour.condition = hour.condition
+                    newHour.feelsLike = hour.feels_like
+//                    newHour.hour = hour.hour
+                    newHour.hour = DataConverters.shared.getHourNumber(byString: hour.hour) // для удобства сортировки
+                    newHour.humidity = hour.humidity
+                    newHour.isThunder = hour.is_thunder
+                    newHour.precMM = hour.prec_mm
+                    newHour.precStrength = hour.prec_strength
+                    newHour.precType = hour.prec_type
+                    newHour.pressureMM = hour.pressure_mm
+                    newHour.temp = hour.temp
+                    newHour.windDir = hour.wind_dir
+                    newHour.windSpeed = hour.wind_speed
+                    
+                    newHours.append(newHour)
+                }
+                
+                newForecast.hours = NSSet.init(array: newHours)
                 
                 newForecasts.append(newForecast)
             }
@@ -169,8 +163,6 @@ class CoreDataManager {
         }
     }
     
-  
-
     
     // Получение данных из базы CoreData
     func getCoreDataCash() -> [Weather]? {
@@ -180,21 +172,10 @@ class CoreDataManager {
         
         let objects = try? persistentContainer.viewContext.fetch(fetchRequest)
         
-        print("Всего погод в кэше: \(String(describing: objects?.count))")
+        print("Всего погод в базе: \(String(describing: objects?.count))")
         
         return objects
     }
-    
-        
-        // Формирование прогнозов
-//    func getForecast(forDate: String, context: NSManagedObjectContext) -> Forecast {
-//        let fetchRequest = Forecast.fetchRequest()
-//
-//        fetchRequest.predicate = NSPredicate(format: "date == %@", forDate)
-//
-//        let forecast = try? context.fetch(fetchRequest).first
-//        return forecast!
-//    }
     
     
     // Стирание всех данных из базы
@@ -204,11 +185,6 @@ class CoreDataManager {
         for object in (try? self.persistentContainer.viewContext.fetch(fetchRequest1)) ?? [] {
             self.persistentContainer.viewContext.delete(object)
         }
-        
-//        let fetchRequest2 = Forecast.fetchRequest()
-//        for object in (try? self.persistentContainer.viewContext.fetch(fetchRequest2)) ?? [] {
-//            self.persistentContainer.viewContext.delete(object)
-//        }
         
         print("CoreDate base deleted")
     }

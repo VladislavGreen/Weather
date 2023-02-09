@@ -17,15 +17,23 @@ class WelcomeViewController: UIViewController {
         let vc: UIViewController
         
         // TEMPORARILY
-        vc = OnboardingViewController()
+//        vc = OnboardingViewController()
 //        vc = PageViewController()
         
-        //        if SettingsManager.shared.isFirstLaunch {
-        //            vc = OnboardingViewController()
-        //            SettingsManager.shared.isFirstLaunch = true
-        //        } else {
-        //            vc = PageViewController()
-        //        }
+        if SettingsManager.shared.isFirstLaunch {
+            
+            SettingsManager.shared.isCelsius = true
+            SettingsManager.shared.isKilometers = true
+            SettingsManager.shared.is24hours = true
+            SettingsManager.shared.notificationIsEnabled = true
+            
+            vc = OnboardingViewController()
+            SettingsManager.shared.isFirstLaunch = true
+            
+        } else {
+            vc = PageViewController()
+        }
+        
         self.navigationController?.pushViewController(vc, animated: true)
         
     }

@@ -7,8 +7,9 @@
 
 import UIKit
 
-class DaysTableViewCell: UITableViewCell {
 
+class DaysTableViewCell: UITableViewCell {
+    
     
     struct ViewModel {
         let dateText: String
@@ -19,10 +20,8 @@ class DaysTableViewCell: UITableViewCell {
     }
     
     
-    private lazy var cellDate: UILabel = {
+    private lazy var cellDateLabel: UILabel = {
         var view = UILabel()
-//        view.frame = CGRect(x: 0, y: 0, width: 53, height: 19)
-        view.backgroundColor = .white
         view.textColor = UIColor(red: 0.604, green: 0.587, blue: 0.587, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
@@ -34,8 +33,6 @@ class DaysTableViewCell: UITableViewCell {
     
     private lazy var humidityLabel: UILabel = {
         var view = UILabel()
-//        view.frame = CGRect(x: 0, y: 0, width: 23, height: 15.19)
-        view.backgroundColor = .white
         view.textColor = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 12)
         var paragraphStyle = NSMutableParagraphStyle()
@@ -49,33 +46,32 @@ class DaysTableViewCell: UITableViewCell {
         let image = UIImage(named: "conditionRain")
         let view = UIImageView()
         view.image = image
-//        view.frame = CGRect(x: 0, y: 0, width: 15, height: 17.08)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var conditionLabel: UILabel = {
         var view = UILabel()
-//        view.frame = CGRect(x: 0, y: 0, width: 206, height: 19)
-        view.backgroundColor = .white
         view.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.05
-        view.attributedText = NSMutableAttributedString(string: "Местами дождь", attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.attributedText = NSMutableAttributedString(
+            string: "Местами дождь",
+            attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         view .translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var minMaxTempLabel: UILabel = {
         var view = UILabel()
-//        view.frame = CGRect(x: 0, y: 0, width: 43, height: 21.83)
-        view.backgroundColor = .white
         view.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 18)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.08
-        view.attributedText = NSMutableAttributedString(string: "4° -11°", attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.attributedText = NSMutableAttributedString(
+            string: "4° -11°",
+            attributes: [NSAttributedString.Key.kern: -0.18, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         view .translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -91,23 +87,24 @@ class DaysTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.cellDate.text = nil
+        self.cellDateLabel.text = nil
         self.humidityLabel.text = nil
         self.precipitationImageView.image = nil
         self.conditionLabel.text = nil
         self.minMaxTempLabel.text = nil
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+//    override func setSelected(_ selected: Bool, animated: Bool) {
+//        super.setSelected(selected, animated: animated)
+//
+//        // Configure the view for the selected state
+//    }
     
     func setupValues(with viewModel: ViewModel) {
-        self.cellDate.text = viewModel.dateText
+        self.cellDateLabel.text = viewModel.dateText
         self.humidityLabel.text = viewModel.humidityText
         self.precipitationImageView.image = viewModel.precImage
         self.conditionLabel.text = viewModel.condition
@@ -115,8 +112,7 @@ class DaysTableViewCell: UITableViewCell {
     }
     
     func setupView() {
-//        contentView.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
-        self.contentView.addSubview(self.cellDate)
+        self.contentView.addSubview(self.cellDateLabel)
         self.contentView.addSubview(self.humidityLabel)
         self.contentView.addSubview(self.precipitationImageView)
         self.contentView.addSubview(self.conditionLabel)
@@ -126,16 +122,16 @@ class DaysTableViewCell: UITableViewCell {
             
             self.contentView.heightAnchor.constraint(equalToConstant: 56),
             
-            self.cellDate.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 6),
-            self.cellDate.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
-            self.cellDate.heightAnchor.constraint(equalToConstant: 19),
+            self.cellDateLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 6),
+            self.cellDateLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
+            self.cellDateLabel.heightAnchor.constraint(equalToConstant: 19),
             
-            self.precipitationImageView.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 5.13),
+            self.precipitationImageView.topAnchor.constraint(equalTo: cellDateLabel.bottomAnchor, constant: 5.13),
             self.precipitationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             self.precipitationImageView.heightAnchor.constraint(equalToConstant: 17.08),
             self.precipitationImageView.widthAnchor.constraint(equalToConstant: 15),
             
-            self.humidityLabel.topAnchor.constraint(equalTo: cellDate.bottomAnchor, constant: 6),
+            self.humidityLabel.topAnchor.constraint(equalTo: cellDateLabel.bottomAnchor, constant: 6),
             self.humidityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
             self.humidityLabel.heightAnchor.constraint(equalToConstant: 15.19),
             
@@ -148,8 +144,6 @@ class DaysTableViewCell: UITableViewCell {
             self.minMaxTempLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 17),
             self.minMaxTempLabel.heightAnchor.constraint(equalToConstant: 19),
             self.minMaxTempLabel.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -26),
-            self.minMaxTempLabel.widthAnchor.constraint(equalToConstant: 21.83),
         ])
     }
-
 }

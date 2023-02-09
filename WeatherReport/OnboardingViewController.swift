@@ -9,7 +9,6 @@ import UIKit
 import CoreLocation
 
 class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
-
     
     var recentLocation: Weather?
 
@@ -139,15 +138,12 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
     @objc
     private func noButtonPressed() {
         print("No Button Pressed")
-        
-        CoreDataManager.defaultManager.deleteCoreDataCash()
-        
-//        recentLocation = nil
-//        pushMainViewController()
+        self.pushPageViewController()
     }
     
     @objc
     private func yesButtonPressed() {
+        
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -180,9 +176,9 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         
         downloadWeatherInfo(lat: Float(lat), lon: Float(lon)) { weather, errorString in
             
-            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!) {
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: "Current location") {
                 DispatchQueue.main.async {
-                    self.pushMainViewController()
+                    self.pushPageViewController()
                 }
             }
         }
@@ -195,10 +191,10 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         
         recentLocation = nil
         locationManager.stopUpdatingLocation()
-        pushMainViewController()
+        self.pushPageViewController()
     }
     
-    func pushMainViewController() {
+    func pushPageViewController() {
         let vc = PageViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
