@@ -164,7 +164,7 @@ class CoreDataManager {
     }
     
     
-    // Получение данных из базы CoreData
+    // Получение всех данных из базы CoreData
     func getCoreDataCash() -> [Weather]? {
         
         let fetchRequest = Weather.fetchRequest()
@@ -175,6 +175,40 @@ class CoreDataManager {
         print("Всего погод в базе: \(String(describing: objects?.count))")
         
         return objects
+    }
+    
+    // Получение прогнозов на неделю (примерно половина суток)
+    func getCityForecasts(cityName: String?) {
+        let fetchRequest = Weather.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
+        
+//        if let cityName {
+//            fetchRequest.predicate = NSPredicate(format: "cityName == %@", cityName)
+//        }
+        
+        let objects = try? persistentContainer.viewContext.fetch(fetchRequest)
+        print(type(of: objects))
+//        return objects
+    }
+    
+    // Получение прогноза для дня (примерно половина суток)
+    func getDayData(forecast: Forecast?) -> DayShort? {
+        let fetchRequest = DayShort.fetchRequest()
+        if let forecast {
+            fetchRequest.predicate = NSPredicate(format: "ofForecast == %@", forecast) }
+        let objects = try? persistentContainer.viewContext.fetch(fetchRequest)
+        
+        return objects?.first
+    }
+    
+    // Получение прогноза для ночи
+    func getNightData(forecast: Forecast?) -> Night? {
+        let fetchRequest = Night.fetchRequest()
+        if let forecast {
+            fetchRequest.predicate = NSPredicate(format: "ofForecast == %@", forecast) }
+        let objects = try? persistentContainer.viewContext.fetch(fetchRequest)
+        
+        return objects?.first
     }
     
     

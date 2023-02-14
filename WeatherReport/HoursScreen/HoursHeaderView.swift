@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HoursHeaderView: UITableViewHeaderFooterView {
     
@@ -18,7 +19,7 @@ class HoursHeaderView: UITableViewHeaderFooterView {
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.03
         view.attributedText = NSMutableAttributedString(
-            string: "Kharkiv,Ukraine",
+            string: "City, Country",
             attributes: [NSAttributedString.Key.kern: 0.36, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -30,6 +31,7 @@ class HoursHeaderView: UITableViewHeaderFooterView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     
     private lazy var separatorView : UIView = {
         let view = UIView()
@@ -47,7 +49,7 @@ class HoursHeaderView: UITableViewHeaderFooterView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     
     private func setupView() {
         
@@ -78,5 +80,24 @@ class HoursHeaderView: UITableViewHeaderFooterView {
     
     func setupValues(title: String) {
         titleLabel.text = title
+    }
+    
+    func setupCharts(with data: [ChartViewModel]) {
+        var swiftUIView = HoursChartsSwiftUIView()
+        swiftUIView.data = data
+        let hostingController = UIHostingController(rootView: swiftUIView.frame(height: 156).edgesIgnoringSafeArea(.all))
+        hostingController.view.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        mainView.addSubview(hostingController.view)
+
+        let constraints = [
+            hostingController.view.topAnchor.constraint(equalTo: mainView.topAnchor),
+            hostingController.view.leftAnchor.constraint(equalTo: mainView.leftAnchor),
+            mainView.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
+            mainView.rightAnchor.constraint(equalTo: hostingController.view.rightAnchor)
+        ]
+
+        NSLayoutConstraint.activate(constraints)
     }
 }

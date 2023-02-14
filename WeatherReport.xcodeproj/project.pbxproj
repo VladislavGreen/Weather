@@ -38,6 +38,11 @@
 		A4CCCA952991250A0051390E /* HoursHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCA942991250A0051390E /* HoursHeaderView.swift */; };
 		A4CCCA9729924CDE0051390E /* DaysHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCA9629924CDE0051390E /* DaysHeaderView.swift */; };
 		A4CCCA992994F0300051390E /* DayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCA982994F0300051390E /* DayViewController.swift */; };
+		A4CCCA9C29965A4B0051390E /* HoursChartsSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCA9B29965A4B0051390E /* HoursChartsSwiftUIView.swift */; };
+		A4CCCAA22997DD770051390E /* DaypartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA12997DD770051390E /* DaypartView.swift */; };
+		A4CCCAA5299A39A80051390E /* DaypartRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA4299A39A80051390E /* DaypartRowView.swift */; };
+		A4CCCAA7299A7AFC0051390E /* SunMoonAirView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */; };
+		A4CCCAA9299BB1680051390E /* CustomDayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA8299BB1680051390E /* CustomDayButton.swift */; };
 		A4CFC78A2976886B006DCD31 /* FontsInfo.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A4CFC7892976886B006DCD31 /* FontsInfo.rtf */; };
 		A4F96E1D296716B7006C0648 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1C296716B7006C0648 /* MainViewController.swift */; };
 		A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */; };
@@ -78,6 +83,11 @@
 		A4CCCA942991250A0051390E /* HoursHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursHeaderView.swift; sourceTree = "<group>"; };
 		A4CCCA9629924CDE0051390E /* DaysHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysHeaderView.swift; sourceTree = "<group>"; };
 		A4CCCA982994F0300051390E /* DayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewController.swift; sourceTree = "<group>"; };
+		A4CCCA9B29965A4B0051390E /* HoursChartsSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursChartsSwiftUIView.swift; sourceTree = "<group>"; };
+		A4CCCAA12997DD770051390E /* DaypartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaypartView.swift; sourceTree = "<group>"; };
+		A4CCCAA4299A39A80051390E /* DaypartRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaypartRowView.swift; sourceTree = "<group>"; };
+		A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunMoonAirView.swift; sourceTree = "<group>"; };
+		A4CCCAA8299BB1680051390E /* CustomDayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDayButton.swift; sourceTree = "<group>"; };
 		A4CFC7892976886B006DCD31 /* FontsInfo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = FontsInfo.rtf; sourceTree = "<group>"; };
 		A4F96E1C296716B7006C0648 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadWeatherManager.swift; sourceTree = "<group>"; };
@@ -190,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				A4CCCA912991246C0051390E /* HourTableViewCell.swift */,
+				A4CCCA9B29965A4B0051390E /* HoursChartsSwiftUIView.swift */,
 				A4CCCA942991250A0051390E /* HoursHeaderView.swift */,
 				A441647F298914F2008C73EC /* HoursViewController.swift */,
 			);
@@ -199,9 +210,21 @@
 		A4CCCA9A2994F11F0051390E /* DaysScreen */ = {
 			isa = PBXGroup;
 			children = (
+				A4CCCAA32997DD830051390E /* SmartViews */,
 				A4CCCA982994F0300051390E /* DayViewController.swift */,
 			);
 			path = DaysScreen;
+			sourceTree = "<group>";
+		};
+		A4CCCAA32997DD830051390E /* SmartViews */ = {
+			isa = PBXGroup;
+			children = (
+				A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */,
+				A4CCCAA4299A39A80051390E /* DaypartRowView.swift */,
+				A4CCCAA8299BB1680051390E /* CustomDayButton.swift */,
+				A4CCCAA12997DD770051390E /* DaypartView.swift */,
+			);
+			path = SmartViews;
 			sourceTree = "<group>";
 		};
 		A4D90495296FEB2F00DA9681 /* Download */ = {
@@ -311,6 +334,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4CCCAA9299BB1680051390E /* CustomDayButton.swift in Sources */,
 				A4F96E1D296716B7006C0648 /* MainViewController.swift in Sources */,
 				A44164782987D102008C73EC /* Alerts.swift in Sources */,
 				A4B3420A29827398000932B1 /* LocationManager.swift in Sources */,
@@ -319,11 +343,13 @@
 				A4CCCA9729924CDE0051390E /* DaysHeaderView.swift in Sources */,
 				A4CCCA90298EBCB30051390E /* HoursPreviewCollectionViewCell.swift in Sources */,
 				A4CA720E2974469B00378993 /* PageViewController.swift in Sources */,
+				A4CCCAA22997DD770051390E /* DaypartView.swift in Sources */,
 				A4BA359129649132002ADA94 /* OnboardingViewController.swift in Sources */,
 				A4B3420C2982D767000932B1 /* TextPicker.swift in Sources */,
 				A4B34204297FEA46000932B1 /* CustomSwitch.swift in Sources */,
 				A4B34208298267D9000932B1 /* DataConverters.swift in Sources */,
 				A493CDB9297EE7FB00ADD854 /* SettingsViewController.swift in Sources */,
+				A4CCCAA7299A7AFC0051390E /* SunMoonAirView.swift in Sources */,
 				A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */,
 				A4CCCA952991250A0051390E /* HoursHeaderView.swift in Sources */,
 				A4CCCA922991246C0051390E /* HourTableViewCell.swift in Sources */,
@@ -331,10 +357,12 @@
 				A4BA358F29648EEE002ADA94 /* WelcomeViewController.swift in Sources */,
 				A4BA358D29634B7E002ADA94 /* SettingsManager.swift in Sources */,
 				A4CCCA8E298EBC330051390E /* HoursPreviewTableViewCell.swift in Sources */,
+				A4CCCAA5299A39A80051390E /* DaypartRowView.swift in Sources */,
 				A4B34202297FE7A1000932B1 /* CustomLabel.swift in Sources */,
 				A4CCCA992994F0300051390E /* DayViewController.swift in Sources */,
 				A4035605296D5D0400B5CDC6 /* CoreDataManager.swift in Sources */,
 				A4BA35762963364D002ADA94 /* WeatherReport.xcdatamodeld in Sources */,
+				A4CCCA9C29965A4B0051390E /* HoursChartsSwiftUIView.swift in Sources */,
 				A4879FBF29782F0C009032DE /* DaysTableViewCell.swift in Sources */,
 				A4BA356E2963364D002ADA94 /* SceneDelegate.swift in Sources */,
 			);

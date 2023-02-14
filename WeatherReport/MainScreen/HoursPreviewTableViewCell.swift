@@ -28,6 +28,7 @@ class HoursPreviewTableViewCell: UITableViewCell  {
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.layout)
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(HoursPreviewCollectionViewCell.self, forCellWithReuseIdentifier: "HoursPreviewCell")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "DefaultCell")
         collectionView.delegate = self

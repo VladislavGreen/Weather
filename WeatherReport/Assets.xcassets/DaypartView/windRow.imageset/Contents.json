@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "windRow.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

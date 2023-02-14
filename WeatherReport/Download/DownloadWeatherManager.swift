@@ -79,15 +79,16 @@ struct ForcastDecodable: Decodable {
     var parts: PartDecodable    // 12-ЧАСОВЫЕ ПРОГНОЗЫ. тип прогноза: night, day_short
     var sunrise: String?        // Время восхода Солнца, локальное время (может отсутствовать для полярных регионов).
     var sunset: String?         // Время заката Солнца, локальное время (может отсутствовать для полярных регионов).
+//‼️
     var moon_code: Int64        // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
         
         /* Не используются:
             biomet =
                 condition = "magnetic-field_0";
                 index = 0;
-            "moon_text" = "moon-code-1";
-            "rise_begin" = "06:56";
-            "set_end" = "17:35";
+‼️            "moon_text" = "moon-code-1";
+‼️             "rise_begin" = "06:56";
+‼️             "set_end" = "17:35";
             week = 1;
          */
     }
@@ -134,7 +135,7 @@ struct NightDecodable: Decodable {
              "pressure_mm" = 753;
              "pressure_pa" = 1003;
              "temp_water" = 11;
-             "uv_index" = 0;
+‼️ добавить (и в Day_shortDecodable тоже)             "uv_index" = 0;
          */
 }
     
@@ -200,6 +201,11 @@ func downloadWeatherInfo(lat: Float, lon: Float, completion: ((_ weather: Weathe
         let httpResponse = response as? HTTPURLResponse
         if httpResponse?.statusCode != 200 {
             print("Status Code = \(String(describing: httpResponse?.statusCode ?? 0))")
+            DispatchQueue.main.async {
+                Alerts.defaultAlert.showOkAlert(
+                    title: "Невозможно получить данные",
+                    message: "Возможно, закончился тестовый период API")
+            }
             completion?(nil, "Status Code = \(String(describing: httpResponse?.statusCode ?? 0))")
             return
         }

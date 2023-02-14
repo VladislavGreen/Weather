@@ -53,8 +53,7 @@ final class DataConverters {
     }
     
     
-    
-    // Определение картинки взависимости от типа осадков:
+    // Определение картинки взависимости от типа осадков (precType):
     // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
     // В нашем задании соответствующих изображений нет, поэтому пока будем использовать пять вариантов дождя/недождя
     func getPrecPicture(byNumber: Int64?) -> UIImage {
@@ -71,6 +70,30 @@ final class DataConverters {
         case 3:
             precImage = UIImage(named: "conditionRainRain")!
         case 4:
+            precImage = UIImage(named: "conditionThunder")!
+        default:
+            precImage = UIImage(named: "cloudness")!
+        }
+        return precImage
+    }
+    
+    // Определение картинки взависимости от силы осадков (precStrength):
+    // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
+    // В нашем задании соответствующих изображений нет, поэтому пока будем использовать пять вариантов дождя/недождя
+    func getPrecStrengthPicture(byPrecStrength: Float) -> UIImage {
+        
+        var precImage = UIImage()
+        
+        switch byPrecStrength {
+        case 0:
+            precImage = UIImage(named: "conditionClear")!
+        case 0.25:
+            precImage = UIImage(named: "conditionClouds")!
+        case 0.5:
+            precImage = UIImage(named: "conditionRain")!
+        case 0.75:
+            precImage = UIImage(named: "conditionRainRain")!
+        case 1.0:
             precImage = UIImage(named: "conditionThunder")!
         default:
             precImage = UIImage(named: "cloudness")!
@@ -216,11 +239,35 @@ final class DataConverters {
         default:
             hourName = "Нет данных"
         }
-
         return hourName
     }
     
-    
+    // Переобразование кода фазы луны в String
+    // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
+    func getMoonPhase(with number: Int64) -> String {
+        let moonPhase: String
+        switch number {
+        case 0:
+            moonPhase = "Полнолуние"
+        case 1...3:
+            moonPhase = "Убывающая"
+        case 4:
+            moonPhase = "Последняя четверть"
+        case 5...7:
+            moonPhase = "Убывающая"
+        case 8:
+            moonPhase = "Новолуние"
+        case 9-11:
+            moonPhase = "Растущая"
+        case 12:
+            moonPhase = "Первая четверть"
+        case 13...15:
+            moonPhase = "Растущая"
+        default:
+            moonPhase = "Не определено"
+        }
+        return moonPhase
+    }
     
     
     // Конвертирование значений температуры Цельсий -> Фаренгейт с округлением

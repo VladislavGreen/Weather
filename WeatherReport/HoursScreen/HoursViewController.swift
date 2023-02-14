@@ -16,23 +16,6 @@ class HoursViewController: UIViewController, NSFetchedResultsControllerDelegate 
     
     var fetchedResultsController: NSFetchedResultsController<Hour>?
     
-    func initFetchedResultsController() {
-        let fetchRequest = Hour.fetchRequest()
-
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "hour", ascending: true)]
-        if let forecast {
-            fetchRequest.predicate = NSPredicate(format: "ofForecast == %@", forecast) }
-        
-        let frc = NSFetchedResultsController(
-            fetchRequest: fetchRequest,
-            managedObjectContext: CoreDataManager.defaultManager.persistentContainer.viewContext,
-            sectionNameKeyPath: nil,
-            cacheName: nil)
-        
-        fetchedResultsController = frc
-    }
-    
-    
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.backgroundColor = view.backgroundColor
@@ -52,7 +35,6 @@ class HoursViewController: UIViewController, NSFetchedResultsControllerDelegate 
         return tableView
     }()
     
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,6 +53,22 @@ class HoursViewController: UIViewController, NSFetchedResultsControllerDelegate 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableView.reloadData()
+    }
+    
+    private func initFetchedResultsController() {
+        let fetchRequest = Hour.fetchRequest()
+
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "hour", ascending: true)]
+        if let forecast {
+            fetchRequest.predicate = NSPredicate(format: "ofForecast == %@", forecast) }
+        
+        let frc = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: CoreDataManager.defaultManager.persistentContainer.viewContext,
+            sectionNameKeyPath: nil,
+            cacheName: nil)
+        
+        fetchedResultsController = frc
     }
     
     
@@ -102,7 +100,23 @@ extension HoursViewController: UITableViewDataSource, UITableViewDelegate {
         
         //  ⭕️ ПЕРЕДАТЬ ДАННЫЕ ДЛЯ ПОСТРОЕНИЯ ГРАФИКА
         
+        var dataForChart: [ChartViewModel] = []
+        for index in 0...23 {
+            if let object = fetchedResultsController?.object(at: [section, index]) {
+                if index % 3 == 0 {
+                    let hour = object.hour ?? "25:25"
+                    let temp = object.temp
+                    let viewModel = ChartViewModel(
+                        hour: hour,
+                        temp: temp
+                    )
+                    dataForChart.append(viewModel)
+                }
+            }
+        }
+        
         view?.setupValues(title: cityName)
+        view?.setupCharts(with: dataForChart)
         return view
     }
     
@@ -166,24 +180,13 @@ extension HoursViewController: UITableViewDataSource, UITableViewDelegate {
         cell.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
         cell.clipsToBounds = true
         
-        
-        // ПЛОХО, нужно понять как работать с данными:
-//        if indexPath.row % 3 != 0 {
-//            cell.isHidden = true
-//        }
-        
         return cell
         
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        // ПЛОХО, нужно понять как работать с данными
-//        if indexPath.row % 3 != 0 {
-//            return 0
-//        } else {
+
             return UITableView.automaticDimension
-//        }
     }
     
     
