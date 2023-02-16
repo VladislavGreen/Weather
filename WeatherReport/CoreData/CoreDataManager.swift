@@ -48,9 +48,23 @@ class CoreDataManager {
         
         persistentContainer.performBackgroundTask { contextBackground in
             
+            // проверяем нет ли уже такой локации
+            let fetchRequestCheck = Weather.fetchRequest()
+            fetchRequestCheck.predicate = NSPredicate(format: "cityName == %@", locationName)
+            let results = try? self.persistentContainer.viewContext.fetch(fetchRequestCheck)
+            if results?.count != 0 {
+                // если есть - удаляем
+                for object in (try? self.persistentContainer.viewContext.fetch(fetchRequestCheck)) ?? [] {
+                    self.persistentContainer.viewContext.delete(object)
+                    print("\(locationName) был удалён и восстановлен с новыми данными")
+                    self.saveContext()
+                }
+            }
+            
+            
             let fetchRequest = Weather.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
-                        
+            
             // наполняем базу CoreData свежими данными
             let newWeather = Weather(context: contextBackground)
             
@@ -80,6 +94,15 @@ class CoreDataManager {
             newWeather.factWindDirection = weather.fact.wind_dir
             newWeather.factWindSpeed = weather.fact.wind_speed
             
+            
+            
+            let newInfo: Info = Info(context: contextBackground)
+            newInfo.lat = weather.info.lat
+            newInfo.lon = weather.info.lon
+            
+            newWeather.info = newInfo
+            
+            
             var newForecasts: [Forecast] = []
             
             for forecast in weather.forecasts {
@@ -88,6 +111,7 @@ class CoreDataManager {
                 newForecast.dateTS = forecast.date_ts
                 newForecast.sunrise = forecast.sunrise
                 newForecast.sunset = forecast.sunset
+                newForecast.moonCode = forecast.moon_code
                 
                 let newDayShort = DayShort(context: contextBackground)
                 let dayShort = forecast.parts.day_short
@@ -106,26 +130,29 @@ class CoreDataManager {
                 newDayShort.windGust = dayShort.wind_gust
                 newDayShort.windDirection = dayShort.wind_dir
                 newDayShort.windSpeed = dayShort.wind_speed
+//                newDayShort.uvIndex = dayShort.uv_index   // API или не даёт или даёт 0
                 
                 newForecast.dayShort = newDayShort
                 
                 
                 let newNight = Night(context: contextBackground)
-                newNight.cloudness = forecast.parts.night.cloudness
-                newNight.condition = forecast.parts.night.condition
-                newNight.feelsLike = forecast.parts.night.feels_like
-                newNight.humidity = forecast.parts.night.humidity
-                newNight.precMM = forecast.parts.night.prec_mm
-                newNight.precPeriod = forecast.parts.night.prec_period
-                newNight.precStrength = forecast.parts.night.prec_strength
-                newNight.precType = forecast.parts.night.prec_type
-                newNight.pressureMM = forecast.parts.night.pressure_mm
-                newNight.tempAverage = forecast.parts.night.temp_avg ?? 0
-                newNight.tempMax = forecast.parts.night.temp_max ?? 0
-                newNight.tempMin = forecast.parts.night.temp_min
-                newNight.windGust = forecast.parts.night.wind_gust
-                newNight.windDirection = forecast.parts.night.wind_dir
-                newNight.windSpeed = forecast.parts.night.wind_speed
+                let night = forecast.parts.night
+                newNight.cloudness = night.cloudness
+                newNight.condition = night.condition
+                newNight.feelsLike = night.feels_like
+                newNight.humidity = night.humidity
+                newNight.precMM = night.prec_mm
+                newNight.precPeriod = night.prec_period
+                newNight.precStrength = night.prec_strength
+                newNight.precType = night.prec_type
+                newNight.pressureMM = night.pressure_mm
+                newNight.tempAverage = night.temp_avg ?? 0
+                newNight.tempMax = night.temp_max ?? 0
+                newNight.tempMin = night.temp_min
+                newNight.windGust = night.wind_gust
+                newNight.windDirection = night.wind_dir
+                newNight.windSpeed = night.wind_speed
+//                newNight.uvIndex = night.uv_index
                 
                 newForecast.night = newNight
                 
@@ -182,14 +209,11 @@ class CoreDataManager {
         let fetchRequest = Weather.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
         
-//        if let cityName {
-//            fetchRequest.predicate = NSPredicate(format: "cityName == %@", cityName)
-//        }
-        
         let objects = try? persistentContainer.viewContext.fetch(fetchRequest)
         print(type(of: objects))
 //        return objects
     }
+    
     
     // Получение прогноза для дня (примерно половина суток)
     func getDayData(forecast: Forecast?) -> DayShort? {

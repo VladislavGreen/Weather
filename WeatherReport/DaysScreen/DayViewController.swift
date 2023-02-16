@@ -38,7 +38,7 @@ class DayViewController: UIViewController {
     private lazy var dayButtonsScrollView: UIScrollView = {
         let view = UIScrollView()
         view.isScrollEnabled = true
-        view.showsHorizontalScrollIndicator = false
+//        view.showsHorizontalScrollIndicator = false
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -68,19 +68,32 @@ class DayViewController: UIViewController {
         mainScrollView.addSubview(dayButtonsScrollView)
         dayButtonsScrollView.addSubview(buttonsStackView)
                 
-        for aForcast in forecasts! {
+        for aForecast in forecasts! {
             let button = CustomDayButton()
-            let dateTS = aForcast.dateTS
+            let dateTS = aForecast.dateTS
             let date = DataConverters.shared.formatDate3(unixDateToConvert: dateTS)
-            button.setTitle(date, for: .normal)
-            button.buttonAction = { [unowned self] in
-                print(aForcast.date)
-//                let vc = self
-//                vc.forecast = aForcast
-//                self.navigationController?.pushViewController(vc, animated: true)
-            }
-           
             
+            button.setTitle(date, for: .normal)
+            
+            let colorPassive = UIColor.white.cgColor
+            let colorActive = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor
+            let colorCurrent = button.layer.backgroundColor
+            
+            button.buttonAction = { [unowned self] in
+                if colorCurrent == colorPassive {
+                    button.layer.backgroundColor = colorActive
+                    button.setTitleColor(.white, for: .normal)
+                } else if colorCurrent == colorActive {
+                    button.layer.backgroundColor = colorPassive
+                    button.setTitleColor(.white, for: .normal)
+                }
+               
+                
+                forecast = aForecast
+                setupView()
+                self.view.layoutIfNeeded()
+            }
+
             buttonsStackView.addArrangedSubview(button)
         }
         

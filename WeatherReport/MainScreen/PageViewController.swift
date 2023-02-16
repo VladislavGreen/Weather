@@ -16,6 +16,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupNavigationBar()
         setupPageController(with: "Current Location")
         setupPageControl()
@@ -78,15 +79,33 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
             metrics: nil,
             views: views)
         )
-        
+            
         createControllers(with: cityName)
-        
-        pageController.setViewControllers([controllers[0]], direction: .forward, animated: false)
+        pageController.setViewControllers([self.controllers[0]], direction: .forward, animated: false)
     }
     
+//    private func updateCoreDataValues(with weathers: [Weather]) {
+//        
+////        let weathers = CoreDataManager.defaultManager.getCoreDataCash()
+//        guard weathers.count != 0 else {
+//            return
+//        }
+//        
+//        for weather in weathers {
+//            guard
+//                let lat = weather.info?.lat,
+//                let lon = weather.info?.lon,
+//                let locationName = weather.cityName
+//            else {
+//                return
+//            }
+//            refreshData(lat: lat, lon: lon, locationName: locationName)
+//        }
+//    }
     
     private func createControllers(with cityName: String) {
         let weathers = CoreDataManager.defaultManager.getCoreDataCash()
+        
         guard !(weathers?.isEmpty ?? true) else {
             
             print("В базе нет данных")
@@ -99,13 +118,16 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
             
             return
         }
+            
         for weather in weathers! {
+               
             let vc = MainViewController()
             vc.weather = weather
             vc.title = weather.cityName
-            
+                
             controllers.insert(vc, at: 0)           // что-бы сразу показывать этот элемент
         }
+        
     }
     
     
@@ -124,6 +146,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
         self.view.addSubview(pageControl)
     }
     
+    
     @objc
     private func editUserSettings() {
         let vc = SettingsViewController()
@@ -135,20 +158,12 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     
     @objc
     private func getNewLocationWeather() {
-        print("getNewLocationWeather")
-        
-        /*
-         При нажатии на эту кнопку должен появиться UIAlertController с возможностью ввода города.
-         После ввода и нажатия на кнопку ок, необходимо перевести название города в координаты - это необходимо, так как большинство погодных сервисов принимают на вход пару координат - долготу и широту. Это легче всего делать с помощью сервиса - https://yandex.ru/dev/maps/geocoder/
-         */
          
          // 1 + getCityNameFromUser
-         
         TextPicker.defaultPicker.showPicker(in: self, withMessage: "Введите название города") { text in
             let cityName = text
             
             // 2 + getLocationFromCityName
-            
             getLocationFromCityName(cityName: cityName) { latLongArray, errorString in
                 guard latLongArray != nil else {
                     return
@@ -164,29 +179,35 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
                 
                 let locationName = latLongArray?[2]
                 
-                // 3 + getWeatherFromLocation
+                // 3 + getWeatherForLocation
+                self.refreshData(lat: latitude, lon: longitude, locationName: locationName)
+            }
+        }
+    }
+    
+    
+    func refreshData(lat: Float, lon: Float, locationName: String? ) {
+        
+        downloadWeatherInfo(lat: lat, lon: lon) { weather, errorString in
+            
+            guard weather != nil else {
+                print("Данные о погоде почему-то не приходят")
+                Alerts.defaultAlert.showOkAlert(
+                    title: "Не можем получить данные",
+                    message: "Проверьте соединение")
+                return
+            }
+            
+            // 4 + addWeatherToCoreData
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName ?? "Unknown location") {
                 
-                downloadWeatherInfo(lat: latitude, lon: longitude) { weather, errorString in
-                    
-                    guard weather != nil else {
-                        print("Данные о погоде почему-то не приходят")
-                        return
-                    }
-                    
-                    // 4 + addWeatherToCoreData
-                    
-                    CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName ?? "Unknown location") {
-                        
-                        // 5 + update Views, set title &  6 - sroll to new VC
-                        
-                        DispatchQueue.main.async {
-                            self.controllers = []
-                            self.pageController.dataSource = nil
-                            self.pageController.delegate = nil
-                            self.setupPageController(with: locationName!)
-                            self.setupPageControl()
-                        }
-                    }
+                // 5 + update Views, set title?
+                DispatchQueue.main.async {
+                    self.controllers = []
+                    self.pageController.dataSource = nil
+                    self.pageController.delegate = nil
+                    self.setupPageController(with: locationName!)
+                    self.setupPageControl()
                 }
             }
         }
@@ -227,7 +248,6 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
 
         let pageContentViewController = pageViewController.viewControllers![0]
         self.title = pageContentViewController.navigationItem.title
-//        self.navigationController?.navigationBar.topItem?.title = pageContentViewController.navigationItem.title
         self.pageControl.currentPage = controllers.lastIndex(of: pageContentViewController)!
     }
 }

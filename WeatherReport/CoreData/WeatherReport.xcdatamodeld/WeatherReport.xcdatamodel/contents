@@ -21,6 +21,7 @@
     <entity name="Forecast" representedClassName="Forecast" syncable="YES" codeGenerationType="class">
         <attribute name="date" optional="YES" attributeType="String"/>
         <attribute name="dateTS" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="moonCode" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sunrise" optional="YES" attributeType="String"/>
         <attribute name="sunset" optional="YES" attributeType="String"/>
         <relationship name="dayShort" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DayShort" inverseName="ofForecast" inverseEntity="DayShort"/>
@@ -43,6 +44,11 @@
         <attribute name="windDir" optional="YES" attributeType="String"/>
         <attribute name="windSpeed" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="ofForecast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Forecast" inverseName="hours" inverseEntity="Forecast"/>
+    </entity>
+    <entity name="Info" representedClassName="Info" syncable="YES" codeGenerationType="class">
+        <attribute name="lat" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lon" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="ofWeather" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Weather" inverseName="info" inverseEntity="Weather"/>
     </entity>
     <entity name="Night" representedClassName="Night" syncable="YES" codeGenerationType="class">
         <attribute name="cloudness" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -84,5 +90,6 @@
         <attribute name="geoProvinceName" optional="YES" attributeType="String"/>
         <attribute name="now" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="forecasts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Forecast" inverseName="ofWeather" inverseEntity="Forecast"/>
+        <relationship name="info" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Info" inverseName="ofWeather" inverseEntity="Info"/>
     </entity>
 </model>

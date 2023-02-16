@@ -11,18 +11,18 @@ import Foundation
 struct WeatherDecodable : Decodable {
     var now : Int64                         // Время сервера в формате Unixtime.
 //        var now_dt: String                // Время сервера в UTC
-//        var info: InfoDecodable           // ОБЪЕКТ информации о населенном пункте.
+    var info: InfoDecodable                 // ❗️ ОБЪЕКТ информации о населенном пункте.
     var geo_object: GeoObjectDecodable      // ОБЪЕКТ с данными объекта гео-локации
     var fact: FactDecodable                 // ОБЪЕКТ фактической информации о погоде.
-       var forecasts: [ForcastDecodable]    // ОБЪЕКТ прогнозной информации о погоде.
+    var forecasts: [ForcastDecodable]    // ОБЪЕКТ прогнозной информации о погоде.
 }
     
 
-//    struct InfoDecodable: Decodable {
-//        var lat: Float              // Широта (в градусах).
-//        var lon: Float              // Долгота (в градусах)
-//        var url: String             // Страница населенного пункта на сайте Яндекс.Погода
-//    }
+    struct InfoDecodable: Decodable {       //  ❗️
+        var lat: Float                      // Широта (в градусах).
+        var lon: Float                      // Долгота (в градусах)
+//        var url: String                   // Страница населенного пункта на сайте Яндекс.Погода
+    }
 
 
 struct GeoObjectDecodable: Decodable {
@@ -79,9 +79,9 @@ struct ForcastDecodable: Decodable {
     var parts: PartDecodable    // 12-ЧАСОВЫЕ ПРОГНОЗЫ. тип прогноза: night, day_short
     var sunrise: String?        // Время восхода Солнца, локальное время (может отсутствовать для полярных регионов).
     var sunset: String?         // Время заката Солнца, локальное время (может отсутствовать для полярных регионов).
-//‼️
     var moon_code: Int64        // Код фазы Луны. 0 — полнолуние.1-3 — убывающая .4 — последняя четверть.5-7 — убывающая .8 — новолуние.9-11 — растущая .12 — первая четверть.13-15 — растущая
         
+//    var index: Int64            // предположительно, UV
         /* Не используются:
             biomet =
                 condition = "magnetic-field_0";
@@ -124,8 +124,11 @@ struct NightDecodable: Decodable {
     var prec_type: Int64            // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град.
     var prec_strength: Float        // Сила осадков: 0 — без. 0.25 — слаб дж/cн. 0.5 — д/с. 0.75 — сильн д/с.1 — ливень/сильн сн.
     var cloudness: Float            // Облачность: 0 — ясно.0.25 — малообл.0.5 и.0.75 — обл с прояснениями.1 — пасмурно.
-        
-        /*  Не задействованы пока:
+    
+    
+//    var uv_index: Int64             // В документации к API отсутствует, по факту есть не всегда и если есть, то 0
+    
+        /*  Не задействованы:
              "_source" = "22,23,0,1,2,3,4,5";
              daytime = n;
              "fresh_snow_mm" = 0;
@@ -135,7 +138,7 @@ struct NightDecodable: Decodable {
              "pressure_mm" = 753;
              "pressure_pa" = 1003;
              "temp_water" = 11;
-‼️ добавить (и в Day_shortDecodable тоже)             "uv_index" = 0;
+
          */
 }
     
@@ -155,6 +158,7 @@ struct Day_shortDecodable: Decodable {
     var prec_type: Int64
     var prec_strength: Float
     var cloudness: Float
+//    var uv_index: Int64
 }
     
 struct HourDecodable: Decodable {
@@ -176,9 +180,10 @@ struct HourDecodable: Decodable {
  
     
 func downloadWeatherInfo(lat: Float, lon: Float, completion: ((_ weather: WeatherDecodable?, _ errorString: String?)->Void)?) {
-    
+    // Первый ключ (закончился): 8175584b-3e7a-48de-9009-04343f71bd8a
+    // Второй ключ: 0e1163fd-af84-4988-883b-5ccf50fb5050
     let headers = [
-        "X-Yandex-API-Key": "8175584b-3e7a-48de-9009-04343f71bd8a",
+        "X-Yandex-API-Key": "0e1163fd-af84-4988-883b-5ccf50fb5050",
         "X-Yandex-API-Host": "https://api.weather.yandex.ru/v2/forecast/"
     ]
         
