@@ -8,19 +8,78 @@
 import UIKit
 import CoreData
 
+
 class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     
+    // Переменная для получения данных
+    var weather: Weather?
     
-    var weatherForCity: Weather?    // Пока используется без FRC
+    // Переменная для передачи данных в HoursViewController и в HoursPreviewTableViewCell
+    var forecastToday: Forecast?
     
-    var forecast: Forecast?
+    // Переменная для передачи данных в DayViewController
+    var forecasts: [Forecast] = []
     
     var fetchedResultsController: NSFetchedResultsController<Forecast>?
+
+    lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        tableView.backgroundColor = view.backgroundColor
+        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 15)
+        tableView.showsVerticalScrollIndicator = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.sectionFooterHeight = 0
+        tableView.sectionHeaderHeight = 10
+        tableView.estimatedRowHeight = 56
+        tableView.layer.cornerRadius = 5
+        tableView.register(MainHeaderView.self, forHeaderFooterViewReuseIdentifier: "MainHeaderView")
+        tableView.register(DaysHeaderView.self, forHeaderFooterViewReuseIdentifier: "DaysHeaderView")
+        tableView.register(HoursPreviewTableViewCell.self, forCellReuseIdentifier: "HoursPreviewCell")
+        tableView.register(DaysTableViewCell.self, forCellReuseIdentifier: "DaysCell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
     
-    func initFetchedResultsController() {
+    private lazy var plusButton: UIButton = {
+        let image = UIImage(systemName: "plus")
+        image?.withTintColor(.darkGray)
+        let button = UIButton()
+        button.setImage(image, for: .normal)
+        button.contentVerticalAlignment = .fill
+        button.contentHorizontalAlignment = .fill
+        button.addTarget(self, action: #selector(plusButtonPressed), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        return button
+    }()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        initFetchedResultsController()
+        fetchedResultsController?.delegate = self
+        try? fetchedResultsController?.performFetch()
+        
+        setupView()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tableView.reloadData()
+    }
+    
+    
+    private func initFetchedResultsController() {
         let fetchRequest = Forecast.fetchRequest()
 
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        if let weather {
+            fetchRequest.predicate = NSPredicate(format: "ofWeather == %@", weather) }
         
         let frc = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -31,429 +90,70 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
         fetchedResultsController = frc
     }
     
-    
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.isScrollEnabled = true
-//        scrollView.alwaysBounceVertical = true
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
-    private lazy var mainView : UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.backgroundColor = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor
-        view.layer.cornerRadius = 5
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var arcImageView : UIImageView = {
-        let imageView = UIImageView()
-        let image = UIImage(named: "Ellipse_3")
-        imageView.image = image
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private lazy var sunriseImageView : UIImageView = {
-        let color = UIColor(red: 0.965, green: 0.867, blue: 0.004, alpha: 1)
-        let image = UIImage(named: "sunrise")?.withTintColor(color, renderingMode: .alwaysOriginal)
-        let imageView = UIImageView()
-            imageView.image = image
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private lazy var sunsetImageView : UIImageView = {
-        let color = UIColor(red: 0.965, green: 0.867, blue: 0.004, alpha: 1)
-        let image = UIImage(named: "sunset")?.withTintColor(color, renderingMode: .alwaysOriginal)
-        let imageView = UIImageView()
-            imageView.image = image
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    // Фактическая температура
-    private var factTempText = String()
-    private lazy var factTempLabel: UILabel = {
-        var view = UILabel()
-            view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-            view.font = UIFont(name: "Rubik-Light_Medium", size: 36)
-            view.textAlignment = .center
-        var paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 0.94
-        view.attributedText = NSMutableAttributedString(
-                string: factTempText + "°",
-                attributes: [NSAttributedString.Key.kern: 3.06,
-                             NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    // Погодные условия
-    private lazy var conditionText = String()
-    private lazy var conditionLabel: UILabel = {
-        var view = UILabel()
-            view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-            view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-            view.textAlignment = .center
-        var paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.05
-        view.attributedText = NSMutableAttributedString(
-            string: conditionText,
-            attributes: [NSAttributedString.Key.kern: 0.16, NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    // Облачность, ветер, дождь
-    private lazy var activitiesLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    
-    private lazy var cloudnessImageView: UIImageView = {
-        let image = UIImage(named: "cloudness")
-        let view = UIImageView()
-        view.image = image
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var cloudnessText = String()
-    private lazy var cloudnessLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.08
-        label.attributedText = NSMutableAttributedString(
-            string: cloudnessText,
-            attributes: [NSAttributedString.Key.kern: 0.14,
-                         NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var windImageView: UIImageView = {
-        let image = UIImage(named: "wind")
-        let view = UIImageView()
-        view.image = image
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var windText = String()
-    private lazy var windLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.08
-        label.attributedText = NSMutableAttributedString(
-            string: windText + " м/с",
-            attributes: [NSAttributedString.Key.kern: 0.14,
-                         NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var rainImageView: UIImageView = {
-        let image = UIImage(named: "rain")
-        let view = UIImageView()
-        view.image = image
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var rainText = String()
-    private lazy var rainLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        label.font = UIFont(name: "Rubik-Light_Regular", size: 14)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.08
-        label.attributedText = NSMutableAttributedString(
-            string: rainText + "%",
-            attributes: [NSAttributedString.Key.kern: 0.14,
-                         NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    // Время и дата прогноза
-    private lazy var dateText = String()
-    private lazy var dateLabel: UILabel = {
-        var view = UILabel()
-//        view.frame = CGRect(x: 0, y: 0, width: 151, height: 20)
-        view.textColor = UIColor(red: 0.965, green: 0.867, blue: 0.004, alpha: 1)
-        view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.05
-        view.attributedText = NSMutableAttributedString(
-            string: dateText,
-            attributes: [NSAttributedString.Key.kern: 0.16,
-                         NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    
-    
-    // Пропускаем пока часть переменных (min/max, sunrise, sunset)
-    
-    
-    
-    private lazy var more24Label: UILabel = {
-        var view = UILabel()
-            view.frame = CGRect(x: 0, y: 0, width: 174, height: 20)
-            view.backgroundColor = .white
-            view.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
-            view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
-        var paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.05
-        view.textAlignment = .right
-        view.isUserInteractionEnabled = true
-        view.attributedText = NSMutableAttributedString(
-            string: "Подробнее на 24 часа",
-            attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue,
-                         NSAttributedString.Key.kern: 0.16,
-                         NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        view .translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.backgroundColor = .systemRed
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.sectionFooterHeight = 0
-        tableView.sectionHeaderHeight = 10
-//        tableView.sectionHeaderTopPadding = 0
-        
-        tableView.estimatedRowHeight = 56
-        tableView.layer.cornerRadius = 5
-//        tableView.register(MainHeaderView.self, forHeaderFooterViewReuseIdentifier: "HeaderView")
-//        tableView.register(HoursTableViewCell.self, forCellReuseIdentifier: "HoursCell")
-        tableView.register(DaysTableViewCell.self, forCellReuseIdentifier: "DaysCell")
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
-    }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        initFetchedResultsController()
-        fetchedResultsController?.delegate = self
-        try? fetchedResultsController?.performFetch()
-        
-        setupValues()
-        setupView()
-    }
-    
-    
     private func setupView() {
-        view.backgroundColor = .white
-        view.addSubview(mainView)
-        view.addSubview(scrollView)
-            scrollView.addSubview(mainView)
-                mainView.addSubview(arcImageView)
-                mainView.addSubview(sunriseImageView)
-                mainView.addSubview(sunsetImageView)
-                mainView.addSubview(factTempLabel)
-                mainView.addSubview(conditionLabel)
-                mainView.addSubview(activitiesLabel)
-                    activitiesLabel.addSubview(cloudnessImageView)
-                    activitiesLabel.addSubview(cloudnessLabel)
-                    activitiesLabel.addSubview(windImageView)
-                    activitiesLabel.addSubview(windLabel)
-                    activitiesLabel.addSubview(rainImageView)
-                    activitiesLabel.addSubview(rainLabel)
-                mainView.addSubview(dateLabel)
-                
-            scrollView.addSubview(more24Label)
-            scrollView.addSubview(tableView)
+        self.view.backgroundColor = .white
+        self.view.addSubview(tableView)
         
-        
+        if weather == nil {
+            self.view.addSubview(plusButton)
+            NSLayoutConstraint.activate([
+                self.plusButton.widthAnchor.constraint(equalToConstant: 100),
+                self.plusButton.heightAnchor.constraint(equalToConstant: 100),
+                self.plusButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                self.plusButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            ])
+        }
+    
         NSLayoutConstraint.activate([
+            self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             
-            scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            
-            mainView.heightAnchor.constraint(equalToConstant: 212),
-            mainView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            mainView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
-            mainView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 112),
-            
-            arcImageView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 33),
-            arcImageView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -31),
-            arcImageView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 17),
-            
-            sunriseImageView.widthAnchor.constraint(equalToConstant: 17),
-            sunriseImageView.heightAnchor.constraint(equalToConstant: 17),
-            sunriseImageView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 145),
-            sunriseImageView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 25),
-            
-            sunsetImageView.widthAnchor.constraint(equalToConstant: 17),
-            sunsetImageView.heightAnchor.constraint(equalToConstant: 17),
-            sunsetImageView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 145),
-            sunsetImageView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -24),
-            
-            factTempLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 58),
-            factTempLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor, constant: 10),
-            factTempLabel.widthAnchor.constraint(equalToConstant: 60),
-            factTempLabel.heightAnchor.constraint(equalToConstant: 40),
-            
-            conditionLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 103),
-            conditionLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor, constant: 5),
-            conditionLabel.heightAnchor.constraint(equalToConstant: 20),
-            
-            activitiesLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 131),
-            activitiesLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
-            activitiesLabel.widthAnchor.constraint(equalToConstant: 189),
-            activitiesLabel.heightAnchor.constraint(equalToConstant: 30),
-            
-            cloudnessImageView.topAnchor.constraint(equalTo: activitiesLabel.topAnchor, constant: 7),
-            cloudnessImageView.bottomAnchor.constraint(equalTo: activitiesLabel.bottomAnchor, constant: -5),
-            cloudnessImageView.leadingAnchor.constraint(equalTo: activitiesLabel.leadingAnchor),
-            cloudnessImageView.widthAnchor.constraint(equalToConstant: 20),
-            cloudnessImageView.heightAnchor.constraint(equalToConstant: 18),
-            
-            cloudnessLabel.topAnchor.constraint(equalTo: activitiesLabel.topAnchor, constant: 7),
-            cloudnessLabel.bottomAnchor.constraint(equalTo: activitiesLabel.bottomAnchor, constant: -5),
-            cloudnessLabel.leadingAnchor.constraint(equalTo: cloudnessImageView.trailingAnchor, constant: 5.04),
-            
-            windImageView.topAnchor.constraint(equalTo: activitiesLabel.topAnchor, constant: 7),
-            windImageView.bottomAnchor.constraint(equalTo: activitiesLabel.bottomAnchor, constant: -5),
-            windImageView.leadingAnchor.constraint(equalTo: cloudnessLabel.trailingAnchor, constant: 21.03),
-            windImageView.widthAnchor.constraint(equalToConstant: 20),
-            windImageView.heightAnchor.constraint(equalToConstant: 18),
-            
-            windLabel.topAnchor.constraint(equalTo: activitiesLabel.topAnchor, constant: 7),
-            windLabel.bottomAnchor.constraint(equalTo: activitiesLabel.bottomAnchor, constant: -5),
-            windLabel.leadingAnchor.constraint(equalTo: windImageView.trailingAnchor, constant: 5.27),
-            
-            rainImageView.topAnchor.constraint(equalTo: activitiesLabel.topAnchor, constant: 7),
-            rainImageView.bottomAnchor.constraint(equalTo: activitiesLabel.bottomAnchor, constant: -5),
-            rainImageView.leadingAnchor.constraint(equalTo: windLabel.trailingAnchor, constant: 19.31),
-            rainImageView.widthAnchor.constraint(equalToConstant: 20),
-            rainImageView.heightAnchor.constraint(equalToConstant: 18),
-            
-            rainLabel.topAnchor.constraint(equalTo: activitiesLabel.topAnchor, constant: 7),
-            rainLabel.bottomAnchor.constraint(equalTo: activitiesLabel.bottomAnchor, constant: -5),
-            rainLabel.leadingAnchor.constraint(equalTo: rainImageView.trailingAnchor, constant: 5.46),
-            
-            dateLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 171),
-            dateLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
-            dateLabel.heightAnchor.constraint(equalToConstant: 20),
-            
-            more24Label.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: 33),
-            more24Label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
-            more24Label.heightAnchor.constraint(equalToConstant: 20),
-            
-            tableView.topAnchor.constraint(equalTo: more24Label.bottomAnchor, constant: 24.5),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
     
-    private func setupValues() {
-        guard weatherForCity != nil else {
-            factTempText = "--"
-            conditionText = "Не можем получить данные"
-            cloudnessText = "-"
-            windText = "-"
-            rainText = "-"
-            // etc (ибо не уверен, что понадобится)
-            return
-        }
-        factTempText = "\(String(describing: weatherForCity!.factTemp))"
-        conditionText = weatherForCity?.factCondition ?? "Хммм... как получить данные?"
-        cloudnessText = "\(String(describing: weatherForCity!.factCloudness))"
-        windText = "\(String(describing: weatherForCity!.factWindSpeed))"
-        rainText = "\(String(describing: weatherForCity!.factPrecProb))"
-        dateText = formatDate1(unixDateToConvert: weatherForCity!.now)
-        
-//        let forcasts = weatherForCity?.forecasts
-//        for forcast in forcasts {
-//            let parts = forcast.parts
-//            let daySort = parts.day_short
-//        }
-        
-        
-
-
-        print("Прогнозов для погоды в городе: \(weatherForCity?.forecasts?.count)")
-    }
-    
-    private func formatDate1(unixDateToConvert: Int64) -> String {
-        let date = NSDate(timeIntervalSince1970: TimeInterval(unixDateToConvert))
-        
-        // Хотим вывести такой формат:  17:48,  пт 16 апреля
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm,  E d MMMM"
-        dateFormatter.timeZone = NSTimeZone() as TimeZone
-        
-        let localDate: String = dateFormatter.string(from: date as Date)
-        return localDate
-    }
-    
-    private func formatDate2(unixDateToConvert: Int64) -> String {
-        let date = NSDate(timeIntervalSince1970: TimeInterval(unixDateToConvert))
-        
-        // Хотим вывести такой формат:  20/01
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "d/M"
-        dateFormatter.timeZone = NSTimeZone() as TimeZone
-        
-        let localDate: String = dateFormatter.string(from: date as Date)
-        return localDate
+    @objc
+    private func plusButtonPressed() {
+        print("emptyButtonPressed")
     }
 }
 
 
-/*
- В таблице:
-    - хэдером может служить mainView, но я пока решил его сделать в контроллере, может быть потом перенесём
-    - Секция 0 - лейбл-кнопка Подробнее на 24 часа
-    - Секция 1 - CollectionView с почасовым прогнозом HoursTableViewCell
-    - Секция 2 - или название секции? Лейбл содержащий: лейбл Ежедневный прогноз и кнопку 25 дней/7 дней
-    - Секция 3 - Кастомные ячейки прогнозов по дням DaysTableViewCell
- */
-
-/*
-    Альтернатива: делать всё, кроме прогнозов в хэдере, а прогнозы - каждый в своей секции
- */
-
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
 
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        guard section == 0 else { return nil }
-//        if let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "HeaderView") as? ProfileHeaderView {
-//            view.setUserDetails(user)
-//            return view
-//        } else {
-//            preconditionFailure("user do not exist")
-//        }
-//    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "MainHeaderView") as? MainHeaderView
+                
+            let indexPath = IndexPath(item: 0, section: 0)
+            let forecastFetched = fetchedResultsController?.object(at: indexPath)
+                
+            let weatherForObject = forecastFetched?.ofWeather
+                
+            let tap = UITapGestureRecognizer(target: self, action: #selector(pushHoursViewController))
+                
+            view?.setupValues(weatherForCity: weatherForObject, more24LabelAction: tap)
+            return view
+        }
+        
+        if section == 1 {
+            let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "DaysHeaderView") as? DaysHeaderView
+            return view
+        }
+        
+        else {
+            return nil
+        }
+    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         
         guard let sections = fetchedResultsController?.sections as [NSFetchedResultsSectionInfo]? else {
             return 0
         }
-        return sections.count
+        return sections.count + 1   // Учитываем одну секцию для CollectionView с превью почасовой погоды
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -463,70 +163,132 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "HoursPreviewCell", for: indexPath) as! HoursPreviewTableViewCell
             
-        let object = fetchedResultsController?.object(at: indexPath)
+            // для кнопки more24Hours - там свой FRC
+            if let object = fetchedResultsController?.object(at: [indexPath.section, indexPath.row]) {
+                forecastToday = object
+            }
             
-        // форматируем дату
-        let dateFetched = object?.dateTS ?? 0
-        let dateConverted = formatDate2(unixDateToConvert: dateFetched)
+            // попробуем запулить второй FRC
             
-        // определяем и картинку для типа осадков
-        let precTypeNumberFetched = object?.dayShort?.precType
-        var precImage = UIImage(named: "cloudness")
+            let fetchRequest = Hour.fetchRequest()
+            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "hour", ascending: true)]
+            if let forecastToday {
+                fetchRequest.predicate = NSPredicate(format: "ofForecast == %@", forecastToday) }
+            let fetchedResultsControllerHours = NSFetchedResultsController(
+                fetchRequest: fetchRequest,
+                managedObjectContext: CoreDataManager.defaultManager.persistentContainer.viewContext,
+                sectionNameKeyPath: nil,
+                cacheName: nil)
+            fetchedResultsControllerHours.delegate = self
+            try? fetchedResultsControllerHours.performFetch()
             
-        // Тип осадков.0 — без осадков.1 — дождь.2 — дождь со снегом.3 — снег.4 — град. В нашем задании соответствующих изображений нет, поэтому будем использовать пять вариантов дождя/недождя
-        
-        switch precTypeNumberFetched {
-        case 0:
-            precImage = UIImage(named: "conditionClear")
-        case 1:
-            precImage = UIImage(named: "conditionClouds")
-        case 2:
-            precImage = UIImage(named: "conditionRain")
-        case 3:
-            precImage = UIImage(named: "conditionRainRain")
-        case 4:
-            precImage = UIImage(named: "conditionThunder")
-        default:
-            precImage = UIImage(named: "cloudness")
+            var hoursEveryThird: [Hour] = []
+            for index in 0...23 {
+                let objectHours = fetchedResultsControllerHours.object(at: [indexPath.section, index])
+                if index % 3 == 0 {
+                    hoursEveryThird.append(objectHours)
+                }
+            }
+            cell.setupHours(hours: hoursEveryThird)
+            return cell
         }
         
-        // Влажность
-        let humidity = object?.dayShort?.humidity
-        let humidityText = "\(humidity ?? 0)%"
+        else {
             
+            let cell = tableView.dequeueReusableCell(withIdentifier: "DaysCell", for: indexPath) as! DaysTableViewCell
             
-        print(object?.dayShort?.condition)
-        
+            let object = fetchedResultsController?.object(at: [indexPath.section - 1, indexPath.row])
             
-        let viewModel = DaysTableViewCell.ViewModel(
-            dateText: dateConverted,
-            humidityText: humidityText,
-            precImage: precImage!,
-            condition: object?.dayShort?.condition ?? "Не могу достать данные!",
-            minMaxTemp: "\(String(describing: object?.dayShort?.tempMin))°/\(String(describing: object?.dayShort?.tempMax))°")
-        cell.setupValues(with: viewModel)
+            // добавляем в массив для отправки в DayViewController
+            forecasts.append(object!)
             
-        cell.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
-        cell.layer.cornerRadius = 5
-        cell.clipsToBounds = true
-        return cell
+            // форматируем дату
+            let dateFetched = object?.dateTS ?? 0
+            let dateConverted = DataConverters.shared.formatDate2(unixDateToConvert: dateFetched)
+            
+            // определяем и картинку для типа осадков
+            let precTypeNumberFetched = object?.dayShort?.precType
+            let precImage = DataConverters.shared.getPrecPicture(byNumber: precTypeNumberFetched)
+            
+            // Влажность
+            let humidity = object?.dayShort?.humidity
+            let humidityText = "\(humidity ?? 0)%"
+            
+            // Температура Min/Max
+            let minTemp = object?.dayShort?.tempMin
+            let maxTemp = object?.dayShort?.tempMax
+            let minMaxTemp = "\(minTemp!)°/\(maxTemp!)°"
+            
+            // Описание погодных условий
+            let condition = object?.dayShort?.condition ?? "No data"
+            let conditionDescription = DataConverters.shared.getConditionDescription(byString: condition)
+            
+            let viewModel = DaysTableViewCell.ViewModel(
+                dateText: dateConverted,
+                humidityText: humidityText,
+                precImage: precImage,
+                condition: conditionDescription,
+                minMaxTemp: minMaxTemp
+            )
+            
+            cell.setupValues(with: viewModel)
+            
+            cell.backgroundColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+            cell.layer.cornerRadius = 5
+            cell.clipsToBounds = true
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        56
+        
+        if indexPath.section == 0 {
+            return 84
+        } else {
+            return 56
+        }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        nil
-    }
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         nil
     }
-        
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+          return 401
+        }
+        if section == 1 {
+            return 56
+        }
+        else {
+            return UITableView.automaticDimension
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            
+        print("tableView didSelectRowAt")
+        if let object = fetchedResultsController?.object(at: [indexPath.section - 1, indexPath.row]) {
+            let vc = DayViewController()
+            vc.forecast = object
+            vc.forecasts = forecasts
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    @objc
+    func pushHoursViewController() {
+        print("more24LabelTapped")
+        let vc = HoursViewController()
+        vc.forecast = forecastToday
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
 }
+
+
