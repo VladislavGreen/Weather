@@ -43,6 +43,7 @@
 		A4CCCAA5299A39A80051390E /* DaypartRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA4299A39A80051390E /* DaypartRowView.swift */; };
 		A4CCCAA7299A7AFC0051390E /* SunMoonAirView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */; };
 		A4CCCAA9299BB1680051390E /* CustomDayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA8299BB1680051390E /* CustomDayButton.swift */; };
+		A4CCCAAB299E3AB30051390E /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAAA299E3AB30051390E /* BackgroundView.swift */; };
 		A4CFC78A2976886B006DCD31 /* FontsInfo.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A4CFC7892976886B006DCD31 /* FontsInfo.rtf */; };
 		A4F96E1D296716B7006C0648 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1C296716B7006C0648 /* MainViewController.swift */; };
 		A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */; };
@@ -88,6 +89,7 @@
 		A4CCCAA4299A39A80051390E /* DaypartRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaypartRowView.swift; sourceTree = "<group>"; };
 		A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunMoonAirView.swift; sourceTree = "<group>"; };
 		A4CCCAA8299BB1680051390E /* CustomDayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDayButton.swift; sourceTree = "<group>"; };
+		A4CCCAAA299E3AB30051390E /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
 		A4CFC7892976886B006DCD31 /* FontsInfo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = FontsInfo.rtf; sourceTree = "<group>"; };
 		A4F96E1C296716B7006C0648 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadWeatherManager.swift; sourceTree = "<group>"; };
@@ -142,8 +144,8 @@
 			isa = PBXGroup;
 			children = (
 				A4B34200297FE77B000932B1 /* SmartViews */,
-				A493CDB8297EE7FB00ADD854 /* SettingsViewController.swift */,
 				A4BA358C29634B7E002ADA94 /* SettingsManager.swift */,
+				A493CDB8297EE7FB00ADD854 /* SettingsViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -153,6 +155,7 @@
 			children = (
 				A4B34201297FE7A1000932B1 /* CustomLabel.swift */,
 				A4B34203297FEA46000932B1 /* CustomSwitch.swift */,
+				A4CCCAAA299E3AB30051390E /* BackgroundView.swift */,
 			);
 			path = SmartViews;
 			sourceTree = "<group>";
@@ -344,6 +347,7 @@
 				A4CCCA90298EBCB30051390E /* HoursPreviewCollectionViewCell.swift in Sources */,
 				A4CA720E2974469B00378993 /* PageViewController.swift in Sources */,
 				A4CCCAA22997DD770051390E /* DaypartView.swift in Sources */,
+				A4CCCAAB299E3AB30051390E /* BackgroundView.swift in Sources */,
 				A4BA359129649132002ADA94 /* OnboardingViewController.swift in Sources */,
 				A4B3420C2982D767000932B1 /* TextPicker.swift in Sources */,
 				A4B34204297FEA46000932B1 /* CustomSwitch.swift in Sources */,
