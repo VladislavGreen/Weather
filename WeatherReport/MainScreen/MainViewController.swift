@@ -66,7 +66,33 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
         
         setupView()
         
+        DispatchQueue.global(qos: .background).async {
+            self.updateCoreDataValues(for: self.weather)
+        }
     }
+    
+    private func updateCoreDataValues(for weather: Weather?) {
+        
+        guard weather != nil else {
+            Alerts.defaultAlert.showOkAlert(title: "Не можем обновить данные", message: "Проверьте соединение")
+            return
+        }
+            
+        let lat = weather?.info?.lat
+        let lon = weather?.info?.lon
+        let locationName = weather?.cityName
+        
+        downloadWeatherInfo(lat: lat!, lon: lon!) { weather, errorString in
+            
+            
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName! ) {
+//                    DispatchQueue.main.async {
+
+//                    }
+                }
+            }
+        }
+
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

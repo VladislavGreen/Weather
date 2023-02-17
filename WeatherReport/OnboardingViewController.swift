@@ -169,6 +169,14 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         let lon = mostRecentLocation.coordinate.longitude
         locationManager.stopUpdatingLocation()
 
+        // Ищем название
+        
+        var cityName: String?
+        
+        getCityNameFromLocation(lat: lat, lon: lon) { locationName, error in
+            cityName = locationName
+        }
+        
         /*
          сначала записываем в CoreData, и из неё же показываем в UI
          */
@@ -176,7 +184,7 @@ class OnboardingViewController: UIViewController, CLLocationManagerDelegate {
         
         downloadWeatherInfo(lat: Float(lat), lon: Float(lon)) { weather, errorString in
             
-            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: "Current location") {
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: cityName ?? "Current location") {
                 DispatchQueue.main.async {
                     self.pushPageViewController()
                 }

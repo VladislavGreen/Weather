@@ -322,5 +322,105 @@ func getLocationFromCityName(cityName: String, completion: ((_ latLongArray: [St
     }
     dataTask.resume()
 }
+
+
+
+func getCityNameFromLocation(lat: Double, lon: Double, completion: ((_ locationName: String?, _ errorString: String?)->Void)?) {
+    
+    var locationName: String?
+    
+    let headers = [
+        "X-Yandex-API-Key": "d7a9fbf5-7b4a-4241-8af7-11f0fec35278",
+        "X-Yandex-API-Host": "https://geocode-maps.yandex.ru/1.x/"
+    ]
+    
+    guard let urlString = NSURL(string: "https://geocode-maps.yandex.ru/1.x/?apikey=d7a9fbf5-7b4a-4241-8af7-11f0fec35278&format=json&geocode=\(lon),\(lat)")
+    else {
+        Alerts.defaultAlert.showOkAlert(
+            title: "Не удаётся найти локацию",
+            message: "Попробуйте убрать мягкие знаки или ввести название латиницей")
+        return
+    }
+    
+    let request = NSMutableURLRequest(
+            url: urlString as URL,
+            cachePolicy: .useProtocolCachePolicy,
+            timeoutInterval: 10.0)
+    
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        
+    let session = URLSession.shared
+    let dataTask = session.dataTask(with: request as URLRequest) { data, response, error in
+            
+        if let error {
+            print(error.localizedDescription)
+            completion?(nil, error.localizedDescription)
+            return
+        }
+            
+        let httpResponse = response as? HTTPURLResponse
+        if httpResponse?.statusCode != 200 {
+            print("Status Code = \(String(describing: httpResponse?.statusCode ?? 0))")
+            completion?(nil, "Status Code = \(String(describing: httpResponse?.statusCode ?? 0))")
+        }
+            
+        guard let unwrappedData = data  else {
+            print("data = nil")
+            completion?(nil, "data = nil")
+            return
+        }
+            
+        do {
+                
+            guard let dictionary = try JSONSerialization.jsonObject(with: unwrappedData as Data, options: .mutableContainers) as? [String: AnyObject] else {
+                    print ("Error")
+                    return
+                }
+            if
+                /*
+                 response
+                         GeoObjectCollection
+                             featureMember
+                                     GeoObject
+                                         metaDataProperty
+                                             GeocoderMetaData
+                                                 AddressDetails
+                                                     Country
+                                                         AdministrativeArea
+                                                             AdministrativeAreaName = "\U041c\U043e\U0441\U043a\U0432\U0430";
+                 */
+                let response = dictionary["response"] as? [String: AnyObject],
+                let geoObjectCollection = response["GeoObjectCollection"] as? [String: AnyObject],
+                let featureMember = geoObjectCollection["featureMember"] as? [[String: AnyObject]],
+                !featureMember.isEmpty,
+                let geoObject = featureMember[0]["GeoObject"] as? [String: AnyObject],
+            
+                let metaDataProperty = geoObject["metaDataProperty"] as? [String: AnyObject],
+                let geocoderMetaData = metaDataProperty["GeocoderMetaData"] as? [String: AnyObject],
+                let addressDetails = geocoderMetaData["AddressDetails"] as? [String: AnyObject],
+                let country = addressDetails["Country"] as? [String: AnyObject],
+                let administrativeArea = country["AdministrativeArea"] as? [String: AnyObject],
+                let administrativeAreaName = administrativeArea["AdministrativeAreaName"] as? String
+//                let locality = administrativeArea["Locality"] as? [String: AnyObject],
+//                let localityName = locality["LocalityName"] as? String
+
+            {
+                locationName = administrativeAreaName
+//                print(administrativeAreaName)
+                
+            } else {
+                print("что могло пойти не так?")
+            }
+            
+            completion?(locationName, nil)
+                    
+        } catch let error {
+            print(error)
+            completion?(nil, error.localizedDescription)
+        }
+    }
+    dataTask.resume()
+}
     
 

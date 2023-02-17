@@ -303,10 +303,10 @@ class MainHeaderView: UITableViewHeaderFooterView {
         if let condition {
             conditionLabel.text = DataConverters.shared.getConditionDescription(byString: condition)
         }
-        cloudnessLabel.text = "\(String(describing: weatherForCity!.factCloudness))"
-        windLabel.text = "\(String(describing: weatherForCity!.factWindSpeed))"
-        rainLabel.text = "\(String(describing: weatherForCity!.factPrecProb))"
-        dateLabel.text = DataConverters.shared.formatDate1(unixDateToConvert: weatherForCity!.now)
+        cloudnessLabel.text = "\(weatherForCity?.factCloudness ?? 0)"
+        windLabel.text = "\(weatherForCity?.factWindSpeed ?? 0)"
+        rainLabel.text = "\(weatherForCity?.factPrecProb ?? 0)"
+        dateLabel.text = DataConverters.shared.formatDate1(unixDateToConvert: weatherForCity?.now ?? 0)
         
         more24Label.addGestureRecognizer(more24LabelAction)
     }

@@ -48,25 +48,20 @@ class CoreDataManager {
         
         persistentContainer.performBackgroundTask { contextBackground in
             
-            // проверяем нет ли уже такой локации
+            let newWeather: Weather!
+           
             let fetchRequestCheck = Weather.fetchRequest()
             fetchRequestCheck.predicate = NSPredicate(format: "cityName == %@", locationName)
-            let results = try? self.persistentContainer.viewContext.fetch(fetchRequestCheck)
+            
+            // проверяем нет ли уже такой локации
+            let results = try? contextBackground.fetch(fetchRequestCheck)
             if results?.count != 0 {
-                // если есть - удаляем
-                for object in (try? self.persistentContainer.viewContext.fetch(fetchRequestCheck)) ?? [] {
-                    self.persistentContainer.viewContext.delete(object)
-                    print("\(locationName) был удалён и восстановлен с новыми данными")
-                    self.saveContext()
-                }
+                // если есть
+                newWeather = results?.first  // и потом меняем значения
+                print("данные для объекта \(String(describing: newWeather.cityName)) были обновлены")
+            } else {
+                newWeather = Weather(context: contextBackground)
             }
-            
-            
-            let fetchRequest = Weather.fetchRequest()
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: "cityName", ascending: true)]
-            
-            // наполняем базу CoreData свежими данными
-            let newWeather = Weather(context: contextBackground)
             
             // Если определяем локацию - передаётся "Current location"
             // Если определяем по названию - передаётся название из ответа API
