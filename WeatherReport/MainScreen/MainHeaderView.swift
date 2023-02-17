@@ -296,17 +296,17 @@ class MainHeaderView: UITableViewHeaderFooterView {
         ])
     }
     
-    func setupValues(weatherForCity: Weather?, more24LabelAction: UITapGestureRecognizer) {
+    func setupValues(weatherForCity: Weather, more24LabelAction: UITapGestureRecognizer) {
 
-        factTempLabel.text = "\(weatherForCity?.factTemp ?? -273)°"
-        let condition = weatherForCity?.factCondition
+        factTempLabel.text = "\(weatherForCity.factTemp)°"
+        let condition = weatherForCity.factCondition
         if let condition {
             conditionLabel.text = DataConverters.shared.getConditionDescription(byString: condition)
         }
-        cloudnessLabel.text = "\(weatherForCity?.factCloudness ?? 0)"
-        windLabel.text = "\(weatherForCity?.factWindSpeed ?? 0)"
-        rainLabel.text = "\(weatherForCity?.factPrecProb ?? 0)"
-        dateLabel.text = DataConverters.shared.formatDate1(unixDateToConvert: weatherForCity?.now ?? 0)
+        cloudnessLabel.text = "\(weatherForCity.factCloudness)"
+        windLabel.text = "\(weatherForCity.factWindSpeed)"
+        rainLabel.text = "\(weatherForCity.factPrecProb)"
+        dateLabel.text = DataConverters.shared.formatDate1(unixDateToConvert: weatherForCity.now)
         
         more24Label.addGestureRecognizer(more24LabelAction)
     }

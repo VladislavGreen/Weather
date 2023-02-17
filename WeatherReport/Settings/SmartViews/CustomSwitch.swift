@@ -12,7 +12,7 @@ public class CustomSwitch: UIControl {
     
     // MARK: Public properties
     
-    public var isOn:Bool = true
+    public var isOn: Bool = true
     
     public var labelOff = UILabel()
     public var labelOn = UILabel()
@@ -164,28 +164,19 @@ extension CustomSwitch {
 extension CustomSwitch {
     
     fileprivate func setupLabels() {
-        
-        // не срабатывает, если ппри старте передаётся isOn = false
-//        if isOn {
-//            labelOff.textColor = offColor
-//            labelOn.textColor = onColor
-//        } else {
-//            labelOff.textColor = onColor
-//            labelOn.textColor = offColor
-//        }
-        
-        labelOn.textColor = self.isOn ? self.onColor : self.offColor
-        labelOff.textColor = self.isOn ? self.offColor : self.onColor
 
         labelOff.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         labelOn.font = UIFont(name: "Rubik-Light_Regular", size: 16)
 
-        let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 0.95
+        let paragraphStyleOff = NSMutableParagraphStyle()
+        paragraphStyleOff.lineHeightMultiple = 0.95
         labelOff.attributedText = NSMutableAttributedString(
-            string: "Off", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            string: "Off", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyleOff])
+        
+        let paragraphStyleOn = NSMutableParagraphStyle()
+        paragraphStyleOn.lineHeightMultiple = 0.95
         labelOn.attributedText = NSMutableAttributedString(
-            string: "On", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+            string: "On", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyleOn])
         
         self.labelOff.textAlignment = .center
         self.labelOn.textAlignment = .center

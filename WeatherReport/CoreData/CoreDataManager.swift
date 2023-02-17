@@ -58,7 +58,7 @@ class CoreDataManager {
             if results?.count != 0 {
                 // если есть
                 newWeather = results?.first  // и потом меняем значения
-                print("данные для объекта \(String(describing: newWeather.cityName)) были обновлены")
+                print("данные для объекта \(newWeather.cityName)) были обновлены")
             } else {
                 newWeather = Weather(context: contextBackground)
             }

@@ -66,38 +66,22 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
         
         setupView()
         
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .default).async {
             self.updateCoreDataValues(for: self.weather)
         }
     }
     
-    private func updateCoreDataValues(for weather: Weather?) {
-        
-        guard weather != nil else {
-            Alerts.defaultAlert.showOkAlert(title: "Не можем обновить данные", message: "Проверьте соединение")
-            return
-        }
-            
-        let lat = weather?.info?.lat
-        let lon = weather?.info?.lon
-        let locationName = weather?.cityName
-        
-        downloadWeatherInfo(lat: lat!, lon: lon!) { weather, errorString in
-            
-            
-            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName! ) {
-//                    DispatchQueue.main.async {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.topItem?.title = weather?.cityName
 
-//                    }
-                }
-            }
-        }
 
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        tableView.reloadData()
     }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        tableView.reloadData()
+//    }
     
     
     private func initFetchedResultsController() {
@@ -139,6 +123,29 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
         ])
     }
     
+    private func updateCoreDataValues(for weather: Weather?) {
+        
+        guard weather != nil else {
+            Alerts.defaultAlert.showOkAlert(title: "Не можем обновить данные", message: "Проверьте соединение")
+            return
+        }
+            
+        let lat = weather?.info?.lat
+        let lon = weather?.info?.lon
+        let locationName = weather?.cityName
+        
+        downloadWeatherInfo(lat: lat!, lon: lon!) { weather, errorString in
+            
+            
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName! ) {
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            }
+        }
+
+    
     @objc
     private func plusButtonPressed() {
         print("emptyButtonPressed")
@@ -155,11 +162,13 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                 
             let indexPath = IndexPath(item: 0, section: 0)
             let forecastFetched = fetchedResultsController?.object(at: indexPath)
-                
-            let weatherForObject = forecastFetched?.ofWeather
-                
             let tap = UITapGestureRecognizer(target: self, action: #selector(pushHoursViewController))
-                
+            
+            guard let weatherForObject = forecastFetched?.ofWeather else {
+                view?.setupValues(weatherForCity: weather!, more24LabelAction: tap)
+                return view
+            }
+ 
             view?.setupValues(weatherForCity: weatherForObject, more24LabelAction: tap)
             return view
         }

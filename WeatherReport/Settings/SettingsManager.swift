@@ -14,11 +14,13 @@ class SettingsManager {
     private let defaults = UserDefaults.standard
     
     var isFirstLaunch: Bool {
-        get {
-            !defaults.bool(forKey: #function)
-        } set {
+        set {
             defaults.setValue(newValue, forKey: #function)
         }
+        get {
+            !defaults.bool(forKey: #function)
+        }
+        
     }
     
     var isCelsius: Bool {

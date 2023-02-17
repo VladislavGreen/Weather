@@ -60,7 +60,6 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
         )
         pageController.dataSource = self
         pageController.delegate = self
-            
         addChild(pageController)
         view.addSubview(pageController.view)
 
@@ -83,25 +82,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
         createControllers(with: cityName)
         pageController.setViewControllers([self.controllers[0]], direction: .forward, animated: false)
     }
-    
-//    private func updateCoreDataValues(with weathers: [Weather]) {
-//        
-////        let weathers = CoreDataManager.defaultManager.getCoreDataCash()
-//        guard weathers.count != 0 else {
-//            return
-//        }
-//        
-//        for weather in weathers {
-//            guard
-//                let lat = weather.info?.lat,
-//                let lon = weather.info?.lon,
-//                let locationName = weather.cityName
-//            else {
-//                return
-//            }
-//            refreshData(lat: lat, lon: lon, locationName: locationName)
-//        }
-//    }
+
     
     private func createControllers(with cityName: String) {
         let weathers = CoreDataManager.defaultManager.getCoreDataCash()
@@ -123,7 +104,8 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
                
             let vc = MainViewController()
             vc.weather = weather
-            vc.title = weather.cityName
+//            vc.navigationController?.navigationBar.topItem?.title = weather.cityName
+//            vc.title = weather.cityName
                 
             controllers.insert(vc, at: 0)           // что-бы сразу показывать этот элемент
         }
@@ -247,7 +229,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     ) {
 
         let pageContentViewController = pageViewController.viewControllers![0]
-        self.title = pageContentViewController.navigationItem.title
+//        self.title = pageContentViewController.navigationItem.title
         self.pageControl.currentPage = controllers.lastIndex(of: pageContentViewController)!
     }
 }

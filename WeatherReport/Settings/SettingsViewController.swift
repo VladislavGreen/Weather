@@ -113,8 +113,8 @@ class SettingsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateXConstraint(object: cloudImageView1, constraintX: self.cloud1XConstraint, constantX: -256, animationDuration: 100)
-        animateXConstraint(object: cloudImageView2, constraintX: self.cloud2XConstraint, constantX: -0, animationDuration: 40)
-        animateXConstraint(object: cloudImageView3, constraintX: self.cloud3XConstraint, constantX: 400, animationDuration: 60)
+        animateXConstraint(object: cloudImageView2, constraintX: self.cloud2XConstraint, constantX: -0, animationDuration: 60)
+        animateXConstraint(object: cloudImageView3, constraintX: self.cloud3XConstraint, constantX: 400, animationDuration: 30)
     }
     
     private func setupView() {
@@ -134,8 +134,6 @@ class SettingsViewController: UIViewController {
         let cloud3XConstraint = cloudImageView3.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: -100)
         self.cloud3XConstraint = cloud3XConstraint
 
-
-
         mainView.addSubview(titleLabel)
         
         let tempLabel = CustomLabel()
@@ -143,6 +141,8 @@ class SettingsViewController: UIViewController {
         mainView.addSubview(tempLabel)
         
         tempSwitch.isOn = SettingsManager.shared.isCelsius
+        tempSwitch.labelOn.textColor = setSwitchLabelOnColor(isOn: tempSwitch.isOn)
+        tempSwitch.labelOff.textColor = setSwitchLabelOffColor(isOn: tempSwitch.isOn)
         mainView.addSubview(tempSwitch)
         
         let windLabel = CustomLabel()
@@ -150,6 +150,8 @@ class SettingsViewController: UIViewController {
         mainView.addSubview(windLabel)
         
         windSwitch.isOn = SettingsManager.shared.isKilometers
+        windSwitch.labelOn.textColor = setSwitchLabelOnColor(isOn: windSwitch.isOn)
+        windSwitch.labelOff.textColor = setSwitchLabelOffColor(isOn: windSwitch.isOn)
         mainView.addSubview(windSwitch)
         
         let timeLabel = CustomLabel()
@@ -157,6 +159,8 @@ class SettingsViewController: UIViewController {
         mainView.addSubview(timeLabel)
 
         timeSwitch.isOn = SettingsManager.shared.is24hours
+        timeSwitch.labelOn.textColor = setSwitchLabelOnColor(isOn: timeSwitch.isOn)
+        timeSwitch.labelOff.textColor = setSwitchLabelOffColor(isOn: timeSwitch.isOn)
         mainView.addSubview(timeSwitch)
         
         let notifLabel = CustomLabel()
@@ -164,6 +168,8 @@ class SettingsViewController: UIViewController {
         mainView.addSubview(notifLabel)
         
         notifSwitch.isOn = SettingsManager.shared.notificationIsEnabled
+        notifSwitch.labelOn.textColor = setSwitchLabelOnColor(isOn: notifSwitch.isOn)
+        notifSwitch.labelOff.textColor = setSwitchLabelOffColor(isOn: notifSwitch.isOn)
         mainView.addSubview(notifSwitch)
          
         mainView.addSubview(setButton)
@@ -232,6 +238,22 @@ class SettingsViewController: UIViewController {
         
     }
     
+    private func setSwitchLabelOnColor(isOn: Bool) -> UIColor {
+        let onColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+        let offColor = UIColor(red: 0.153, green: 0.153, blue: 0.133, alpha: 1)
+        var color = UIColor()
+        color = isOn ? onColor : offColor
+        return color
+    }
+    
+    private func setSwitchLabelOffColor(isOn: Bool) -> UIColor {
+        let onColor = UIColor(red: 0.914, green: 0.933, blue: 0.98, alpha: 1)
+        let offColor = UIColor(red: 0.153, green: 0.153, blue: 0.133, alpha: 1)
+        var color = UIColor()
+        color = isOn ? offColor : onColor
+        return color
+    }
+    
     
     @objc
     private func setButtonPressed() {
@@ -246,30 +268,6 @@ class SettingsViewController: UIViewController {
         self.dismiss(animated: true)
     }
     
-    func moveClouds() {
-        NSLayoutConstraint.deactivate([
-            self.cloud1XConstraint
-        ])
-        
-        var newCloud1Constraint: NSLayoutConstraint
-        
-        if self.cloud1XConstraint.constant == -78 {
-            newCloud1Constraint = cloudImageView1.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-        }
-        else {
-            newCloud1Constraint = cloudImageView1.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: -78)
-        }
-        
-        NSLayoutConstraint.activate([
-            newCloud1Constraint
-        ])
-        
-        UIView.animate(
-            withDuration: 2, delay: 0.1, options: [.repeat, .autoreverse]) {
-                self.view.layoutIfNeeded()
-                self.cloud1XConstraint = newCloud1Constraint
-        }
-    }
     
     private func animateXConstraint(object: UIImageView, constraintX: NSLayoutConstraint, constantX: Float, animationDuration: Double) {
         NSLayoutConstraint.deactivate([
@@ -293,7 +291,7 @@ class SettingsViewController: UIViewController {
         
         
         UIView.animate(
-            withDuration: animationDuration, delay: 0.1, options: [.repeat, .autoreverse]) {
+            withDuration: animationDuration, delay: 0, options: [.repeat, .autoreverse]) {
                 
                 self.view.layoutIfNeeded()
                 
