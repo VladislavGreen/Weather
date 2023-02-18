@@ -74,14 +74,9 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.topItem?.title = weather?.cityName
-
-
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        tableView.reloadData()
-//    }
+
     
     
     private func initFetchedResultsController() {
@@ -102,6 +97,16 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     
     private func setupView() {
         self.view.backgroundColor = .white
+        
+//        self.navigationController?.navigationItem.title = weather?.cityName
+//        self.navigationItem.title = weather?.cityName
+//        self.navigationController?.title = weather?.cityName
+//        self.title = weather?.cityName
+//        self.navigationController?.navigationBar.topItem?.title = weather?.cityName
+//        self.navigationController?.presentationController?.presentingViewController.title = weather?.cityName
+//        self.navigationController?.parent?.navigationItem.title = weather?.cityName
+
+        
         self.view.addSubview(tableView)
         
         if weather == nil {
@@ -119,7 +124,6 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
             self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            
         ])
     }
     
@@ -130,20 +134,25 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
             return
         }
             
-        let lat = weather?.info?.lat
-        let lon = weather?.info?.lon
-        let locationName = weather?.cityName
+        guard
+            let lat = weather?.info?.lat,
+            let lon = weather?.info?.lon,
+            let locationName = weather?.cityName
+        else {
+            print("MainViewController updateCoreDataValues что-то не так")
+            return
+        }
         
-        downloadWeatherInfo(lat: lat!, lon: lon!) { weather, errorString in
+        downloadWeatherInfo(lat: lat, lon: lon) { weather, errorString in
             
-            
-            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName! ) {
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
+            CoreDataManager.defaultManager.setCoreDataCash(weather: weather!, locationName: locationName ) {
+                DispatchQueue.main.async {
+                    self.forecasts = []
+                    self.tableView.reloadData()
                 }
             }
         }
+    }
 
     
     @objc
@@ -183,6 +192,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         
         guard let sections = fetchedResultsController?.sections as [NSFetchedResultsSectionInfo]? else {
@@ -190,6 +200,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         }
         return sections.count + 1   // Учитываем одну секцию для CollectionView с превью почасовой погоды
     }
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         1
@@ -239,6 +250,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             
             // добавляем в массив для отправки в DayViewController
             forecasts.append(object!)
+            
+            
+            
+            print("cellForRowAt \(forecasts.count)")
             
             // форматируем дату
             let dateFetched = object?.dateTS ?? 0
@@ -293,6 +308,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         nil
     }
     
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
           return 401
@@ -305,6 +321,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             
         print("tableView didSelectRowAt")
@@ -315,6 +332,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
     
     @objc
     func pushHoursViewController() {

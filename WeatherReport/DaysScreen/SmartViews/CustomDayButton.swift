@@ -16,7 +16,7 @@ final class CustomDayButton: UIButton {
         self.frame = CGRect(x: 0, y: 0, width: 88, height: 36)
         self.setTitle("Title", for: .normal)
         self.setTitleColor(.black, for: .normal)
-        self.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 18)
+//        self.titleLabel?.font = UIFont(name: "Rubik-Light_Regular", size: 18)
         self.layer.backgroundColor = UIColor.white.cgColor
 
 //        self.layer.backgroundColor = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor

@@ -11,7 +11,7 @@ import CoreData
 
 class DayViewController: UIViewController {
     
-    weak var forecast: Forecast?
+    var forecast: Forecast?
     var forecasts: [Forecast]?
     
     private lazy var mainScrollView: UIScrollView = {
@@ -57,17 +57,11 @@ class DayViewController: UIViewController {
         setupView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
     
-    private func setupView() {
-        view.backgroundColor = .white
-        view.addSubview(mainScrollView)
-        
-        titleLabel.text = forecast?.ofWeather?.cityName
-        mainScrollView.addSubview(titleLabel)
-        
-        mainScrollView.addSubview(dayButtonsScrollView)
-        dayButtonsScrollView.addSubview(buttonsStackView)
-                
+    func setupButtons() {
         for aForecast in forecasts! {
             let button = CustomDayButton()
             let dateTS = aForecast.dateTS
@@ -77,26 +71,50 @@ class DayViewController: UIViewController {
             
             let colorPassive = UIColor.white.cgColor
             let colorActive = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor
-            let colorCurrent = button.layer.backgroundColor
             
-            button.buttonAction = { [unowned self] in
-                if colorCurrent == colorPassive {
-                    button.layer.backgroundColor = colorActive
-                    button.setTitleColor(.white, for: .normal)
-                } else if colorCurrent == colorActive {
-                    button.layer.backgroundColor = colorPassive
-                    button.setTitleColor(.white, for: .normal)
-                }
-               
-                
-                forecast = aForecast
-                setupView()
-                self.view.layoutIfNeeded()
+            if dateTS == self.forecast?.dateTS {
+//                print("if")
+                button.layer.backgroundColor = colorActive
+                button.setTitleColor(.white, for: .normal)
+            }
+            else {              // не срабатывает
+//                print("else")
+                button.layer.backgroundColor = colorPassive
+                button.setTitleColor(.black, for: .normal)
             }
 
+            button.buttonAction = {
+                
+                self.forecast = aForecast
+                
+                if dateTS == aForecast.dateTS {
+                    button.layer.backgroundColor = colorActive
+                    button.setTitleColor(.white, for: .normal)
+                } else {
+                    button.layer.backgroundColor = colorPassive
+                    button.setTitleColor(.black, for: .normal)
+                }
+
+                print(self.forecasts?.count)
+                self.setupView()
+                self.view.layoutIfNeeded()
+            }
             buttonsStackView.addArrangedSubview(button)
         }
+    }
+    
+    private func setupView() {
         
+        view.backgroundColor = .white
+        view.addSubview(mainScrollView)
+        
+        titleLabel.text = forecast?.ofWeather?.cityName
+        mainScrollView.addSubview(titleLabel)
+        
+        mainScrollView.addSubview(dayButtonsScrollView)
+        dayButtonsScrollView.addSubview(buttonsStackView)
+                
+        setupButtons()
         
         
         let day: DayShort = CoreDataManager.defaultManager.getDayData(forecast: forecast)!
@@ -243,10 +261,10 @@ class DayViewController: UIViewController {
             sunDuration: sunDuration,
             sunRise: sunrise,
             sunSet: sunset,
-            moonDuration: sunDuration,  // ‼️
-            moonRise: sunrise,          // ‼️
-            moonSet: sunset,            // ‼️
-            airQuality: "42"            // ‼️
+            moonDuration: sunDuration,  // нет в API Яндекс-Погоды
+            moonRise: sunrise,          // нет в API Яндекс-Погоды
+            moonSet: sunset,            // нет в API Яндекс-Погоды
+            airQuality: "42"            // нет в API Яндекс-Погоды
         )
         let sunMoonAirView = SunMoonAirView()
         sunMoonAirView.setupValues(with: sunMoonAirValues)
