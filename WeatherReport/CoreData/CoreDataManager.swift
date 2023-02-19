@@ -11,11 +11,8 @@ import CoreData
 class CoreDataManager {
     
     static let defaultManager = CoreDataManager()
-    private init() {
-        
-    }
+    private init() {}
     
-//    var locationName : String = "Current Location"
     
     lazy var persistentContainer: NSPersistentContainer = {
 
@@ -62,9 +59,7 @@ class CoreDataManager {
             } else {
                 newWeather = Weather(context: contextBackground)
             }
-            
-            // Если определяем локацию - передаётся "Current location"
-            // Если определяем по названию - передаётся название из ответа API
+
             newWeather.cityName = locationName
             
             newWeather.now = weather.now
@@ -88,8 +83,6 @@ class CoreDataManager {
             newWeather.factWindGust = weather.fact.wind_gust
             newWeather.factWindDirection = weather.fact.wind_dir
             newWeather.factWindSpeed = weather.fact.wind_speed
-            
-            
             
             let newInfo: Info = Info(context: contextBackground)
             newInfo.lat = weather.info.lat
@@ -199,6 +192,7 @@ class CoreDataManager {
         return objects
     }
     
+    
     // Получение прогнозов на неделю (примерно половина суток)
     func getCityForecasts(cityName: String?) {
         let fetchRequest = Weather.fetchRequest()
@@ -220,6 +214,7 @@ class CoreDataManager {
         return objects?.first
     }
     
+    
     // Получение прогноза для ночи
     func getNightData(forecast: Forecast?) -> Night? {
         let fetchRequest = Night.fetchRequest()
@@ -229,18 +224,5 @@ class CoreDataManager {
         
         return objects?.first
     }
-    
-    
-    // Стирание всех данных из базы
-    func deleteCoreDataCash() {
-        
-        let fetchRequest1 = Weather.fetchRequest()
-        for object in (try? self.persistentContainer.viewContext.fetch(fetchRequest1)) ?? [] {
-            self.persistentContainer.viewContext.delete(object)
-        }
-        
-        print("CoreDate base deleted")
-    }
-    
     
 }

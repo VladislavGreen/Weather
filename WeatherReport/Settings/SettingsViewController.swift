@@ -11,15 +11,17 @@ import UIKit
 
 class SettingsViewController: UIViewController {
     
+    
     private lazy var cloudImageView1: UIImageView = {
         let view = UIImageView()
         view.frame = CGRect(x: 0, y: 0, width: 531.4, height: 58.1)
-//        view.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
         view.image = UIImage(named: "cloud1")!
             view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     var cloud1XConstraint: NSLayoutConstraint!
+    
     
     private lazy var cloudImageView2: UIImageView = {
         let view = UIImageView()
@@ -28,7 +30,9 @@ class SettingsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     var cloud2XConstraint: NSLayoutConstraint!
+    
     
     private lazy var cloudImageView3: UIImageView = {
         let view = UIImageView()
@@ -37,6 +41,7 @@ class SettingsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     var cloud3XConstraint: NSLayoutConstraint!
     
     
@@ -47,6 +52,7 @@ class SettingsViewController: UIViewController {
         aSwitch.translatesAutoresizingMaskIntoConstraints = false
         return aSwitch
     }()
+    
     
     let windSwitch: CustomSwitch = {
         let aSwitch = CustomSwitch()
@@ -116,6 +122,7 @@ class SettingsViewController: UIViewController {
         animateXConstraint(object: cloudImageView2, constraintX: self.cloud2XConstraint, constantX: -0, animationDuration: 60)
         animateXConstraint(object: cloudImageView3, constraintX: self.cloud3XConstraint, constantX: 400, animationDuration: 30)
     }
+    
     
     private func setupView() {
         self.view.backgroundColor = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1)
@@ -235,7 +242,6 @@ class SettingsViewController: UIViewController {
             self.setButton.widthAnchor.constraint(equalToConstant: 250),
             self.setButton.heightAnchor.constraint(equalToConstant: 40)
         ])
-        
     }
     
     private func setSwitchLabelOnColor(isOn: Bool) -> UIColor {
@@ -257,7 +263,6 @@ class SettingsViewController: UIViewController {
     
     @objc
     private func setButtonPressed() {
-        print("setButtonPressed")
         
         // сохранение параметров в UserDefaults
         SettingsManager.shared.isCelsius = self.tempSwitch.isOn

@@ -14,6 +14,8 @@ class DayViewController: UIViewController {
     var forecast: Forecast?
     var forecasts: [Forecast]?
     
+    var selectedIndex: IndexPath?
+    
     private lazy var mainScrollView: UIScrollView = {
         let view = UIScrollView()
         view.isScrollEnabled = true
@@ -34,74 +36,39 @@ class DayViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    private lazy var dayButtonsScrollView: UIScrollView = {
-        let view = UIScrollView()
-        view.isScrollEnabled = true
-//        view.showsHorizontalScrollIndicator = false
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+   
+    private lazy var layout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 16
+        layout.minimumLineSpacing = 16
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
+        return layout
     }()
     
-    private lazy var buttonsStackView: UIStackView = {
-        let view = UIStackView()
-        view.axis = .horizontal
-        view.spacing = 14
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+    
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(DayViewCollectionViewCell.self, forCellWithReuseIdentifier: "CollectionCell")
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "DefaultCell")
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.isUserInteractionEnabled = true
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
     }()
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupView()
     }
     
-    func setupButtons() {
-        for aForecast in forecasts! {
-            let button = CustomDayButton()
-            let dateTS = aForecast.dateTS
-            let date = DataConverters.shared.formatDate3(unixDateToConvert: dateTS)
-            
-            button.setTitle(date, for: .normal)
-            
-            let colorPassive = UIColor.white.cgColor
-            let colorActive = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor
-            
-            if dateTS == self.forecast?.dateTS {
-//                print("if")
-                button.layer.backgroundColor = colorActive
-                button.setTitleColor(.white, for: .normal)
-            }
-            else {              // не срабатывает
-//                print("else")
-                button.layer.backgroundColor = colorPassive
-                button.setTitleColor(.black, for: .normal)
-            }
-
-            button.buttonAction = {
-                
-                self.forecast = aForecast
-                
-                if dateTS == aForecast.dateTS {
-                    button.layer.backgroundColor = colorActive
-                    button.setTitleColor(.white, for: .normal)
-                } else {
-                    button.layer.backgroundColor = colorPassive
-                    button.setTitleColor(.black, for: .normal)
-                }
-
-                print(self.forecasts?.count)
-                self.setupView()
-                self.view.layoutIfNeeded()
-            }
-            buttonsStackView.addArrangedSubview(button)
-        }
-    }
     
     private func setupView() {
         
@@ -111,12 +78,9 @@ class DayViewController: UIViewController {
         titleLabel.text = forecast?.ofWeather?.cityName
         mainScrollView.addSubview(titleLabel)
         
-        mainScrollView.addSubview(dayButtonsScrollView)
-        dayButtonsScrollView.addSubview(buttonsStackView)
+        mainScrollView.addSubview(collectionView)
+        
                 
-        setupButtons()
-        
-        
         let day: DayShort = CoreDataManager.defaultManager.getDayData(forecast: forecast)!
         
         let dayView = DaypartView()
@@ -126,7 +90,7 @@ class DayViewController: UIViewController {
             precStrength: day.precStrength,
             condition: day.condition ?? "no data"
         )
-                dayView.setupValues(with: viewModelDay)
+        dayView.setupValues(with: viewModelDay)
         dayView.translatesAutoresizingMaskIntoConstraints = false
         mainScrollView.addSubview(dayView)
 
@@ -151,7 +115,7 @@ class DayViewController: UIViewController {
         dayWindRowView.translatesAutoresizingMaskIntoConstraints = false
         dayView.addSubview(dayWindRowView)
         
-        // ⭕️ ЗАНЕСТИ в базу УФ ИНДЕКС Пока так
+        // УФ в API отсутствует, поэтому так:
         let dayUFRow = DaypartRowView.DaypartRowViewModel(
             picImage: UIImage(named: "conditionClear")!,
             titleLabelText: "УФ индекс",
@@ -181,7 +145,6 @@ class DayViewController: UIViewController {
         dayCloudsRowView.setupValues(with: dayCloudsRow)
         dayCloudsRowView.translatesAutoresizingMaskIntoConstraints = false
         dayView.addSubview(dayCloudsRowView)
-        
         
         
         let night: Night = CoreDataManager.defaultManager.getNightData(forecast: forecast)!
@@ -218,7 +181,7 @@ class DayViewController: UIViewController {
         nightWindRowView.translatesAutoresizingMaskIntoConstraints = false
         nightView.addSubview(nightWindRowView)
         
-        // ⭕️ ЗАНЕСТИ в базу УФ ИНДЕКС Пока так
+        // УФ в API отсутствует, поэтому так:
         let nightUFRow = DaypartRowView.DaypartRowViewModel(
             picImage: UIImage(named: "conditionClear")!,
             titleLabelText: "УФ индекс",
@@ -248,7 +211,6 @@ class DayViewController: UIViewController {
         nightCloudsRowView.setupValues(with: nightCloudsRow)
         nightCloudsRowView.translatesAutoresizingMaskIntoConstraints = false
         nightView.addSubview(nightCloudsRowView)
-        
         
         
         guard let sunrise = forecast?.sunrise, let sunset = forecast?.sunset else {
@@ -282,19 +244,12 @@ class DayViewController: UIViewController {
             self.titleLabel.leadingAnchor.constraint(equalTo: self.mainScrollView.leadingAnchor),
             self.titleLabel.heightAnchor.constraint(equalToConstant: 22),
             
-            self.dayButtonsScrollView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 40),
-            self.dayButtonsScrollView.leadingAnchor.constraint(equalTo: self.mainScrollView.leadingAnchor),
-            self.dayButtonsScrollView.trailingAnchor.constraint(equalTo: self.mainScrollView.trailingAnchor),
-            self.dayButtonsScrollView.heightAnchor.constraint(equalToConstant: 36),
-            
-            self.buttonsStackView.topAnchor.constraint(equalTo: self.dayButtonsScrollView.topAnchor),
-            self.buttonsStackView.leadingAnchor.constraint(equalTo: self.dayButtonsScrollView.leadingAnchor),
-            self.buttonsStackView.trailingAnchor.constraint(equalTo: self.dayButtonsScrollView.trailingAnchor),
-            self.buttonsStackView.bottomAnchor.constraint(equalTo: self.dayButtonsScrollView.bottomAnchor),
-            
-            
-            
-            dayView.topAnchor.constraint(equalTo: self.dayButtonsScrollView.bottomAnchor, constant: 40),
+            self.collectionView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 40),
+            self.collectionView.leadingAnchor.constraint(equalTo: self.mainScrollView.leadingAnchor),
+            self.collectionView.trailingAnchor.constraint(equalTo: self.mainScrollView.trailingAnchor),
+            self.collectionView.heightAnchor.constraint(equalToConstant: 36),
+           
+            dayView.topAnchor.constraint(equalTo: self.collectionView.bottomAnchor, constant: 40),
             dayView.leadingAnchor.constraint(equalTo: self.mainScrollView.leadingAnchor),
             dayView.widthAnchor.constraint(equalTo: self.mainScrollView.widthAnchor),
             dayView.heightAnchor.constraint(equalToConstant: 341),
@@ -353,6 +308,7 @@ class DayViewController: UIViewController {
         ])
     }
     
+    
     private func getTimeDifference(timeSet: String, timeRise: String) -> String {
         print("\(timeSet)")
         
@@ -373,12 +329,66 @@ class DayViewController: UIViewController {
         
         return result
     }
-    
-//    @objc
-//    private func showAnotherDay(forecast: Forecast) {
-//        let vc = self
-//        vc.forecast = forecast
-//        self.navigationController?.pushViewController(vc, animated: true)
-//    }
 }
+
+
+
+extension DayViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let number = forecasts?.count else { return 0 }
+        return number
+    }
+
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as? DayViewCollectionViewCell else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DefaultCell", for: indexPath)
+            return cell
+        }
+        
+        let backColor: CGColor
+        let textColor: UIColor
+        
+        if indexPath == selectedIndex {
+            backColor = UIColor(red: 0.125, green: 0.306, blue: 0.78, alpha: 1).cgColor
+            textColor = .white
+        } else {
+            backColor = UIColor.white.cgColor
+            textColor = .black
+        }
+        
+        let forecast = forecasts?[indexPath.row]
+        
+        let dateTS = forecast?.dateTS
+        let dateText = DataConverters.shared.formatDate3(unixDateToConvert: dateTS!)
+        
+        let viewModel = DayViewCollectionViewCell.DayCollectionCellViewModel(
+            labelText: dateText,
+            labelTextColor: textColor,
+            viewColor: backColor
+        )
+        cell.setupValues(with: viewModel)
+        
+        cell.tapHandler = { [weak self] in
+//            print("collectionView cellForItemAt tapHandler \(indexPath.row)")
+            self?.forecast = forecast
+            self?.setupView()
+            self?.selectedIndex = indexPath
+            collectionView.reloadData()
+        }
+
+        return cell
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        return CGSize(width: 88, height: 36)
+    }
+    
+}
+
 

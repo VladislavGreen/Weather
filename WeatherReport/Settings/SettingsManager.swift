@@ -7,7 +7,9 @@
 
 import Foundation
 
+
 class SettingsManager {
+    
     
     static let shared = SettingsManager()
     

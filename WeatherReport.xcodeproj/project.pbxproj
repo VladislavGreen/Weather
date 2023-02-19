@@ -10,6 +10,7 @@
 		A4035601296B216200B5CDC6 /* FullServerAnswerExample.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A4035600296B216200B5CDC6 /* FullServerAnswerExample.rtf */; };
 		A4035603296BFBE500B5CDC6 /* StructServerAnswer.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A4035602296BFBE500B5CDC6 /* StructServerAnswer.rtf */; };
 		A4035605296D5D0400B5CDC6 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4035604296D5D0400B5CDC6 /* CoreDataManager.swift */; };
+		A438898129A257EB0077F4DC /* DayViewCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A438898029A257EB0077F4DC /* DayViewCollectionViewCell.swift */; };
 		A44164782987D102008C73EC /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44164772987D102008C73EC /* Alerts.swift */; };
 		A441647A2987EA71008C73EC /* Current Issues.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A44164792987EA71008C73EC /* Current Issues.rtf */; };
 		A4416480298914F2008C73EC /* HoursViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A441647F298914F2008C73EC /* HoursViewController.swift */; };
@@ -43,7 +44,6 @@
 		A4CCCAA5299A39A80051390E /* DaypartRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA4299A39A80051390E /* DaypartRowView.swift */; };
 		A4CCCAA7299A7AFC0051390E /* SunMoonAirView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */; };
 		A4CCCAA9299BB1680051390E /* CustomDayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAA8299BB1680051390E /* CustomDayButton.swift */; };
-		A4CCCAAB299E3AB30051390E /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CCCAAA299E3AB30051390E /* BackgroundView.swift */; };
 		A4CFC78A2976886B006DCD31 /* FontsInfo.rtf in Resources */ = {isa = PBXBuildFile; fileRef = A4CFC7892976886B006DCD31 /* FontsInfo.rtf */; };
 		A4F96E1D296716B7006C0648 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1C296716B7006C0648 /* MainViewController.swift */; };
 		A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */; };
@@ -54,6 +54,7 @@
 		A4035600296B216200B5CDC6 /* FullServerAnswerExample.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = FullServerAnswerExample.rtf; sourceTree = "<group>"; };
 		A4035602296BFBE500B5CDC6 /* StructServerAnswer.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = StructServerAnswer.rtf; sourceTree = "<group>"; };
 		A4035604296D5D0400B5CDC6 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		A438898029A257EB0077F4DC /* DayViewCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewCollectionViewCell.swift; sourceTree = "<group>"; };
 		A44164772987D102008C73EC /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		A44164792987EA71008C73EC /* Current Issues.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Current Issues.rtf"; sourceTree = "<group>"; };
 		A441647F298914F2008C73EC /* HoursViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursViewController.swift; sourceTree = "<group>"; };
@@ -89,7 +90,6 @@
 		A4CCCAA4299A39A80051390E /* DaypartRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaypartRowView.swift; sourceTree = "<group>"; };
 		A4CCCAA6299A7AFC0051390E /* SunMoonAirView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunMoonAirView.swift; sourceTree = "<group>"; };
 		A4CCCAA8299BB1680051390E /* CustomDayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDayButton.swift; sourceTree = "<group>"; };
-		A4CCCAAA299E3AB30051390E /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
 		A4CFC7892976886B006DCD31 /* FontsInfo.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = FontsInfo.rtf; sourceTree = "<group>"; };
 		A4F96E1C296716B7006C0648 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A4F96E1E296724A3006C0648 /* DownloadWeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadWeatherManager.swift; sourceTree = "<group>"; };
@@ -107,6 +107,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A438898229A284970077F4DC /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A4B3420929827398000932B1 /* LocationManager.swift */,
+				A4BA359029649132002ADA94 /* OnboardingViewController.swift */,
+				A4BA358E29648EEE002ADA94 /* WelcomeViewController.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		A44164762987D0D7008C73EC /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,7 +165,6 @@
 			children = (
 				A4B34201297FE7A1000932B1 /* CustomLabel.swift */,
 				A4B34203297FEA46000932B1 /* CustomSwitch.swift */,
-				A4CCCAAA299E3AB30051390E /* BackgroundView.swift */,
 			);
 			path = SmartViews;
 			sourceTree = "<group>";
@@ -186,9 +195,7 @@
 				A4879FBD29782E31009032DE /* MainScreen */,
 				A4F96E1B29671545006C0648 /* CoreData */,
 				A4D90495296FEB2F00DA9681 /* Download */,
-				A4B3420929827398000932B1 /* LocationManager.swift */,
-				A4BA359029649132002ADA94 /* OnboardingViewController.swift */,
-				A4BA358E29648EEE002ADA94 /* WelcomeViewController.swift */,
+				A438898229A284970077F4DC /* Onboarding */,
 				A4F96E1A296714E7006C0648 /* Application Layer */,
 				A472B78829670423004CA2D9 /* Fonts */,
 				A4BA35772963364E002ADA94 /* Assets.xcassets */,
@@ -214,6 +221,7 @@
 			isa = PBXGroup;
 			children = (
 				A4CCCAA32997DD830051390E /* SmartViews */,
+				A438898029A257EB0077F4DC /* DayViewCollectionViewCell.swift */,
 				A4CCCA982994F0300051390E /* DayViewController.swift */,
 			);
 			path = DaysScreen;
@@ -347,11 +355,11 @@
 				A4CCCA90298EBCB30051390E /* HoursPreviewCollectionViewCell.swift in Sources */,
 				A4CA720E2974469B00378993 /* PageViewController.swift in Sources */,
 				A4CCCAA22997DD770051390E /* DaypartView.swift in Sources */,
-				A4CCCAAB299E3AB30051390E /* BackgroundView.swift in Sources */,
 				A4BA359129649132002ADA94 /* OnboardingViewController.swift in Sources */,
 				A4B3420C2982D767000932B1 /* TextPicker.swift in Sources */,
 				A4B34204297FEA46000932B1 /* CustomSwitch.swift in Sources */,
 				A4B34208298267D9000932B1 /* DataConverters.swift in Sources */,
+				A438898129A257EB0077F4DC /* DayViewCollectionViewCell.swift in Sources */,
 				A493CDB9297EE7FB00ADD854 /* SettingsViewController.swift in Sources */,
 				A4CCCAA7299A7AFC0051390E /* SunMoonAirView.swift in Sources */,
 				A4F96E1F296724A3006C0648 /* DownloadWeatherManager.swift in Sources */,

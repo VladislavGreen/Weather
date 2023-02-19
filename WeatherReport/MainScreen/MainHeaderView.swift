@@ -49,6 +49,7 @@ class MainHeaderView: UITableViewHeaderFooterView {
         return imageView
     }()
     
+    
     // Фактическая температура
     private lazy var factTempLabel: UILabel = {
         var view = UILabel()
@@ -169,7 +170,45 @@ class MainHeaderView: UITableViewHeaderFooterView {
         return view
     }()
     
-    // Пропускаем пока часть переменных (min/max, sunrise, sunset), т.к. их фактическое значение наш API не предосталяет
+    private lazy var minMaxTempLabel: UILabel = {
+        let view = UILabel()
+        view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.05
+        view.attributedText = NSMutableAttributedString(
+            string: "7 /13",
+            attributes: [NSAttributedString.Key.kern: 0.32, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var sunriseLabel: UILabel = {
+        let view = UILabel()
+        view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.font = UIFont(name: "Rubik-Light_Medium", size: 14)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.15
+        view.attributedText = NSMutableAttributedString(
+            string: "05:41",
+            attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var sunsetLabel: UILabel = {
+        let view = UILabel()
+        view.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        view.font = UIFont(name: "Rubik-Light_Medium", size: 14)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.15
+        view.attributedText = NSMutableAttributedString(
+            string: "19:31",
+            attributes: [NSAttributedString.Key.kern: 0.14, NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     
     @objc private lazy var more24Label: UILabel = {
         var view = UILabel()
@@ -207,7 +246,10 @@ class MainHeaderView: UITableViewHeaderFooterView {
         contentView.addSubview(mainView)
         mainView.addSubview(arcImageView)
         mainView.addSubview(sunriseImageView)
+        mainView.addSubview(sunriseLabel)
         mainView.addSubview(sunsetImageView)
+        mainView.addSubview(sunsetLabel)
+        mainView.addSubview(minMaxTempLabel)
         mainView.addSubview(factTempLabel)
         mainView.addSubview(conditionLabel)
         mainView.addSubview(activitiesLabel)
@@ -236,18 +278,30 @@ class MainHeaderView: UITableViewHeaderFooterView {
             sunriseImageView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 145),
             sunriseImageView.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 25),
             
+            sunriseLabel.topAnchor.constraint(equalTo: sunriseImageView.bottomAnchor, constant: 5),
+            sunriseLabel.leadingAnchor.constraint(equalTo: mainView.leadingAnchor, constant: 17),
+            sunriseLabel.heightAnchor.constraint(equalToConstant: 19),
+            
             sunsetImageView.widthAnchor.constraint(equalToConstant: 17),
             sunsetImageView.heightAnchor.constraint(equalToConstant: 17),
             sunsetImageView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 145),
             sunsetImageView.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -24),
             
+            sunsetLabel.topAnchor.constraint(equalTo: sunsetImageView.bottomAnchor, constant: 5),
+            sunsetLabel.trailingAnchor.constraint(equalTo: mainView.trailingAnchor, constant: -14),
+            sunsetLabel.heightAnchor.constraint(equalToConstant: 19),
+            
+            minMaxTempLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 33),
+            minMaxTempLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
+            minMaxTempLabel.heightAnchor.constraint(equalToConstant: 20),
+            
             factTempLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 58),
-            factTempLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor, constant: 10),
+            factTempLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor, constant: 0),
             factTempLabel.widthAnchor.constraint(equalToConstant: 60),
             factTempLabel.heightAnchor.constraint(equalToConstant: 40),
             
             conditionLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 103),
-            conditionLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor, constant: 5),
+            conditionLabel.centerXAnchor.constraint(equalTo: mainView.centerXAnchor, constant: 0),
             conditionLabel.heightAnchor.constraint(equalToConstant: 20),
             
             activitiesLabel.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 131),
@@ -296,7 +350,7 @@ class MainHeaderView: UITableViewHeaderFooterView {
         ])
     }
     
-    func setupValues(weatherForCity: Weather, more24LabelAction: UITapGestureRecognizer) {
+    func setupValues(weatherForCity: Weather, forecastElements: [String], more24LabelAction: UITapGestureRecognizer) {
 
         factTempLabel.text = "\(weatherForCity.factTemp)°"
         let condition = weatherForCity.factCondition
@@ -307,6 +361,10 @@ class MainHeaderView: UITableViewHeaderFooterView {
         windLabel.text = "\(weatherForCity.factWindSpeed)"
         rainLabel.text = "\(weatherForCity.factPrecProb)"
         dateLabel.text = DataConverters.shared.formatDate1(unixDateToConvert: weatherForCity.now)
+        
+        sunriseLabel.text = forecastElements[0]
+        sunsetLabel.text = forecastElements[1]
+        minMaxTempLabel.text = forecastElements[2]
         
         more24Label.addGestureRecognizer(more24LabelAction)
     }

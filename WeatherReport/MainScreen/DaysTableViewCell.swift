@@ -76,7 +76,9 @@ class DaysTableViewCell: UITableViewCell {
         return view
     }()
     
+    
     private var indexPath: IndexPath?
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -97,11 +99,6 @@ class DaysTableViewCell: UITableViewCell {
         self.minMaxTempLabel.text = nil
     }
     
-//    override func setSelected(_ selected: Bool, animated: Bool) {
-//        super.setSelected(selected, animated: animated)
-//
-//        // Configure the view for the selected state
-//    }
     
     func setupValues(with viewModel: ViewModel) {
         self.cellDateLabel.text = viewModel.dateText

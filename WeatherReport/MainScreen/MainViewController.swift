@@ -60,24 +60,24 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        initFetchedResultsController()
-        fetchedResultsController?.delegate = self
-        try? fetchedResultsController?.performFetch()
-        
-        setupView()
-        
-        DispatchQueue.global(qos: .default).async {
-            self.updateCoreDataValues(for: self.weather)
+        if weather != nil {
+            initFetchedResultsController()
+            fetchedResultsController?.delegate = self
+            try? fetchedResultsController?.performFetch()
+
+            DispatchQueue.global(qos: .default).async {
+                self.updateCoreDataValues(for: self.weather)
+            }
         }
+        setupView()
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.topItem?.title = weather?.cityName
     }
-    
 
-    
     
     private func initFetchedResultsController() {
         let fetchRequest = Forecast.fetchRequest()
@@ -96,17 +96,8 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
     }
     
     private func setupView() {
+        
         self.view.backgroundColor = .white
-        
-//        self.navigationController?.navigationItem.title = weather?.cityName
-//        self.navigationItem.title = weather?.cityName
-//        self.navigationController?.title = weather?.cityName
-//        self.title = weather?.cityName
-//        self.navigationController?.navigationBar.topItem?.title = weather?.cityName
-//        self.navigationController?.presentationController?.presentingViewController.title = weather?.cityName
-//        self.navigationController?.parent?.navigationItem.title = weather?.cityName
-
-        
         self.view.addSubview(tableView)
         
         if weather == nil {
@@ -153,15 +144,12 @@ class MainViewController: UIViewController, NSFetchedResultsControllerDelegate {
             }
         }
     }
-
     
     @objc
     private func plusButtonPressed() {
         print("emptyButtonPressed")
     }
 }
-
-
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
 
@@ -174,11 +162,18 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             let tap = UITapGestureRecognizer(target: self, action: #selector(pushHoursViewController))
             
             guard let weatherForObject = forecastFetched?.ofWeather else {
-                view?.setupValues(weatherForCity: weather!, more24LabelAction: tap)
+                view?.setupValues(weatherForCity: weather!, forecastElements: ["","",""], more24LabelAction: tap)
                 return view
             }
+            
+            let sunriseTime: String = forecastToday?.sunrise ?? "--:--"
+            let sunsetTime: String = forecastToday?.sunset ?? "--:--"
+            let tempMin: String = String(forecastToday?.dayShort?.tempMin ?? -273)
+            let tempMax: String = String(forecastToday?.dayShort?.tempMax ?? -273)
+            let tempMinMax: String = "\(tempMin)°/\(tempMax)°"
+            let forecastElements = [sunriseTime, sunsetTime, tempMinMax]
  
-            view?.setupValues(weatherForCity: weatherForObject, more24LabelAction: tap)
+            view?.setupValues(weatherForCity: weatherForObject, forecastElements: forecastElements, more24LabelAction: tap)
             return view
         }
         
@@ -238,6 +233,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                     hoursEveryThird.append(objectHours)
                 }
             }
+            cell.cellAction = {
+                self.pushHoursViewController()
+                print("cellAction")
+            }
             cell.setupHours(hours: hoursEveryThird)
             return cell
         }
@@ -250,10 +249,6 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             
             // добавляем в массив для отправки в DayViewController
             forecasts.append(object!)
-            
-            
-            
-            print("cellForRowAt \(forecasts.count)")
             
             // форматируем дату
             let dateFetched = object?.dateTS ?? 0

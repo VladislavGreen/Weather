@@ -28,7 +28,8 @@ final class CustomDayButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func buttonTapped () {
+    @objc
+    private func buttonTapped () {
         buttonAction()
     }
 }

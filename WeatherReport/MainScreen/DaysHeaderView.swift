@@ -17,6 +17,7 @@ class DaysHeaderView: UITableViewHeaderFooterView {
         return view
     }()
     
+    
     let label: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
@@ -30,6 +31,7 @@ class DaysHeaderView: UITableViewHeaderFooterView {
         return label
     }()
     
+    
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         setupView()
@@ -38,6 +40,7 @@ class DaysHeaderView: UITableViewHeaderFooterView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     
     private func setupView() {
         contentView.addSubview(mainView)

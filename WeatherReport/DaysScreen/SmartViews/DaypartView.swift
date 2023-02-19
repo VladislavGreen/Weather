@@ -69,7 +69,7 @@ final class DaypartView: UIView {
         return view
     }()
     
-    let conditionLabel: UILabel = {
+    private let conditionLabel: UILabel = {
         let view = UILabel()
         view.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Medium", size: 18)
@@ -91,7 +91,7 @@ final class DaypartView: UIView {
     }
   
     
-    func setupView() {
+    private func setupView() {
 
         self.addSubview(mainView)
         self.mainView.addSubview(daypartTitleLabel)

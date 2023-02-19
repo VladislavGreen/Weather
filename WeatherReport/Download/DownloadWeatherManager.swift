@@ -86,9 +86,9 @@ struct ForcastDecodable: Decodable {
             biomet =
                 condition = "magnetic-field_0";
                 index = 0;
-‼️            "moon_text" = "moon-code-1";
-‼️             "rise_begin" = "06:56";
-‼️             "set_end" = "17:35";
+            "moon_text" = "moon-code-1";
+            "rise_begin" = "06:56";
+            "set_end" = "17:35";
             week = 1;
          */
     }
@@ -312,6 +312,10 @@ func getLocationFromCityName(cityName: String, completion: ((_ latLongArray: [St
                 }
             } else {
                 print("что могло пойти не так?")
+                DispatchQueue.main.async {
+                    Alerts.defaultAlert.showOkAlert(title: "Не удаётся найти локацию", message: "Попробуйте изменить запрос")
+                }
+                return
             }
             completion?(latLongArray, nil)
                     

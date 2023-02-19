@@ -14,7 +14,11 @@ class HoursPreviewCollectionViewCell: UICollectionViewCell {
         let hourText: String
         let conditionImage: UIImage
         let tempText: String
+        let backColor: CGColor
+        let textColor: UIColor
     }
+    
+    var tapHandler: (()->())?
     
     private lazy var previewView: UIView = {
         let view = UIView()
@@ -28,7 +32,6 @@ class HoursPreviewCollectionViewCell: UICollectionViewCell {
     private lazy var hourLabel: UILabel = {
         var view = UILabel()
         view.frame = CGRect(x: 0, y: 0, width: 37, height: 18)
-        view.textColor = UIColor(red: 0.154, green: 0.152, blue: 0.135, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 13)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.08
@@ -51,7 +54,6 @@ class HoursPreviewCollectionViewCell: UICollectionViewCell {
     private lazy var tempLabel: UILabel = {
         var view = UILabel()
         view.frame = CGRect(x: 0, y: 0, width: 20, height: 18)
-        view.textColor = UIColor(red: 0.31, green: 0.31, blue: 0.31, alpha: 1)
         view.font = UIFont(name: "Rubik-Light_Regular", size: 16)
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 0.95
@@ -77,6 +79,9 @@ class HoursPreviewCollectionViewCell: UICollectionViewCell {
         self.hourLabel.text = viewModel.hourText
         self.conditionImageView.image = viewModel.conditionImage
         self.tempLabel.text = viewModel.tempText
+        self.previewView.layer.backgroundColor = viewModel.backColor
+        self.hourLabel.textColor = viewModel.textColor
+        self.tempLabel.textColor = viewModel.textColor
     }
     
     private func setupView() {
@@ -102,7 +107,6 @@ class HoursPreviewCollectionViewCell: UICollectionViewCell {
             
             self.tempLabel.bottomAnchor.constraint(equalTo: previewView.bottomAnchor, constant: -8),
             self.tempLabel.centerXAnchor.constraint(equalTo: previewView.centerXAnchor, constant: 0),
-            
         ])
     }
 }
